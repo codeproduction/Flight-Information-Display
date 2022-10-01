@@ -20,3 +20,12 @@
 **Why is this project of interest to you?**
 
 - It particularly interests me as I have a long-held interest in planes and passion for aviation
+
+## User Stories
+
+- As a user, I shall be able to add a Flight to the FlightDisplay
+- As a user, I shall be able to update the arrival and departure status and other information of individual flights
+- As a user, I shall be able to view summary statistics of flight performances
+- As a user, I shall be able to remove a Flight from the list of flights displayed on the FlightDisplay
+- As a user, I want to be able to add emergency passenger alerts in a separate section on the FlightDisplay if needed
+- As a user, I could add local points of interest e.g. shopping centers, malls, schools, etc
