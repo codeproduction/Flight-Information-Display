@@ -10,7 +10,8 @@ public interface Flight {
 
     void setFlightNumber(int flightNumber);
 
-    boolean isCancelled();
+    String getStatus();
 
-    void setCancelled(boolean isCancelled);
+    void setStatus(String status);
+
 }

@@ -5,17 +5,17 @@ public class DepartingFlight implements Flight {
     private String airline;
     private int flightNumber;
     private String origin;
-    private boolean cancelled;
+    private String status;
     private String scheduledDepartureTime;
     private String estimatedDepartureTime;
 
 
-    public DepartingFlight(String airline, int flightNumber, String origin, boolean cancelled,
+    public DepartingFlight(String airline, int flightNumber, String origin, String status,
                            String scheduledDepartureTime, String estimatedDepartureTime) {
         this.airline = airline;
         this.flightNumber = flightNumber;
         this.origin = origin;
-        this.cancelled = cancelled;
+        this.status = status;
         this.scheduledDepartureTime = scheduledDepartureTime;
         this.estimatedDepartureTime = estimatedDepartureTime;
     }
@@ -50,13 +50,13 @@ public class DepartingFlight implements Flight {
     }
 
     @Override
-    public boolean isCancelled() {
-        return cancelled;
+    public String getStatus() {
+        return status;
     }
 
     @Override
-    public void setCancelled(boolean isCancelled) {
-        this.cancelled = isCancelled;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getEstimatedDepartureTime() {
