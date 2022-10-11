@@ -1,4 +1,7 @@
-package model;
+package ui;
+
+import model.ArrivingFlight;
+import model.DepartingFlight;
 
 import java.util.List;
 import java.util.Scanner;
@@ -19,6 +22,7 @@ public class FlightDisplay {
     protected List<ArrivingFlight> arrivingFlights;
     protected List<DepartingFlight> departingFlights;
     private List<String> emergencyAlerts;
+    private Scanner input;
 
     public FlightDisplay() {
         runFlightDisplay();
@@ -36,12 +40,20 @@ public class FlightDisplay {
          *      - end/quit program ???
          * 3. Display/Print FlightDisplay after user chooses an option other than quitting
          */
-        boolean isDisplayNeeded;
+        boolean isDisplayNeeded = true;
         String option;
         init();
 
+        while (isDisplayNeeded) {
+            displayOptionsMenu();
+            option = input.next();
 
-
+            if (option.equals("q")) {
+                isDisplayNeeded = false;
+            } else {
+                processCommand(option);
+            }
+        }
     }
 
     // MODIFIES: Fields of the class FlightList
@@ -55,15 +67,16 @@ public class FlightDisplay {
         // stub
     }
 
+    // rename method
+    // REQUIRES:
+    // MODIFIES
+    // EFFECTS
+    public void processCommand(String action) {
+        // stub
+    }
 
     public void addEmergencyAlert(String alert) {
         emergencyAlerts.add(alert);
-    }
-
-    // not sure if this might be needed
-    public void endProgram() {
-        // stub
-        // not sure if this is needed and how will it function
     }
 
     // REQUIRES: alert passed to function must already be contained in the emergencyAlerts list
