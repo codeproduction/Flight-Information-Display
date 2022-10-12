@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DepartingFlightTest {
-    private DepartingFlight testArrivingFlight;
+    private DepartingFlight testDepartingFlight;
 
     @BeforeEach
     void setup() {
-        testArrivingFlight = new DepartingFlight(
+        testDepartingFlight = new DepartingFlight(
                 "Air Canada",
                 58,
                 "Vancouver",
@@ -21,11 +21,19 @@ public class DepartingFlightTest {
 
     @Test
     public void testConstructor() {
-        assertEquals("Air Canada", testArrivingFlight.getAirline());
-        assertEquals(58, testArrivingFlight.getFlightNumber());
-        assertEquals("Vancouver", testArrivingFlight.getOrigin());
-        assertEquals("On Time", testArrivingFlight.getStatus());
-        assertEquals("07:00", testArrivingFlight.getScheduledDepartureTime());
-        assertEquals("07:07", testArrivingFlight.getEstimatedDepartureTime());
+        assertEquals("Air Canada", testDepartingFlight.getAirline());
+        assertEquals(58, testDepartingFlight.getFlightNumber());
+        assertEquals("Vancouver", testDepartingFlight.getDestination());
+        assertEquals("On Time", testDepartingFlight.getStatus());
+        assertEquals("07:00", testDepartingFlight.getScheduledDepartureTime());
+        assertEquals("07:07", testDepartingFlight.getEstimatedDepartureTime());
+    }
+
+    @Test
+    public void TestCancelFlight() {
+        testDepartingFlight.cancelFlight(testDepartingFlight);
+
+        assertEquals("CANCELLED", testDepartingFlight.getStatus());
+        assertEquals("XX:XX", testDepartingFlight.getEstimatedDepartureTime());
     }
 }

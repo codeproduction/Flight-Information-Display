@@ -29,4 +29,12 @@ public class ArrivingFlightTest {
         assertEquals("19:55", testArrivingFlight.getEstimatedArrivalTime());
     }
 
+    @Test
+    public void TestCancelFlight() {
+        testArrivingFlight.cancelFlight(testArrivingFlight);
+
+        assertEquals("CANCELLED", testArrivingFlight.getStatus());
+        assertEquals("XX:XX", testArrivingFlight.getEstimatedArrivalTime());
+    }
+
 }

@@ -9,6 +9,10 @@ public class ArrivingFlight implements Flight {
     private String scheduledArrivalTime;
     private String estimatedArrivalTime;
 
+    // REQUIRES: flightNumber is int of max three digits length, min one digit,
+    //           status is one of four possible status (On time, Early, Delayed, Cancelled),
+    //           scheduledArrivalTime and estimatedArrivalTime must be in 24-hour format (xx:xx)
+    //           origin, status, airline must be non-empty string
     public ArrivingFlight(String airline, int flightNumber, String origin, String status,
                           String scheduledArrivalTime, String estimatedArrivalTime) {
         this.airline = airline;
@@ -17,6 +21,11 @@ public class ArrivingFlight implements Flight {
         this.status = status;
         this.scheduledArrivalTime = scheduledArrivalTime;
         this.estimatedArrivalTime = estimatedArrivalTime;
+    }
+
+    public void cancelFlight(ArrivingFlight flight) {
+        flight.setStatus("CANCELLED");
+        flight.setEstimatedArrivalTime("XX:XX");
     }
 
     // getters and setters
@@ -36,6 +45,7 @@ public class ArrivingFlight implements Flight {
     }
 
     @Override
+    // REQUIRES: flight number of max three digits length && min one digit
     public void setFlightNumber(int flightNumber) {
         this.flightNumber = flightNumber;
     }
@@ -54,6 +64,7 @@ public class ArrivingFlight implements Flight {
     }
 
     @Override
+    // REQUIRES: one of four statuses (On time, Early, Delayed, Cancelled)
     public void setStatus(String status) {
         this.status = status;
     }
@@ -70,6 +81,7 @@ public class ArrivingFlight implements Flight {
         return estimatedArrivalTime;
     }
 
+    // REQUIRES: if status => Cancelled, then time must be input as "xx:xx"
     public void setEstimatedArrivalTime(String estimatedArrivalTime) {
         this.estimatedArrivalTime = estimatedArrivalTime;
     }
