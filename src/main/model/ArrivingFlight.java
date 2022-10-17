@@ -74,11 +74,17 @@ public class ArrivingFlight implements Flight {
         return estimatedArrivalTime;
     }
 
+    // todo maybe: add if clause(s) - might need to use a regex expression
     // MODIFIES: this
     // REQUIRES: if status => Cancelled, then time must be input as "xx:xx"
     //           AND time must be String of format "HH:mm"
-    // todo maybe: add if clause(s) - might need to use a regex expression
+    // EFFECTS: Sets ETA to given time if status not already "Cancelled" otherwise sets it
+    //          to "xx:xx"
     public void setEstimatedArrivalTime(String estimatedArrivalTime) {
-        this.estimatedArrivalTime = estimatedArrivalTime;
+        if (this.getStatus().equals("CANCELLED")) {
+            this.estimatedArrivalTime = "xx:xx";
+        } else {
+            this.estimatedArrivalTime = estimatedArrivalTime;
+        }
     }
 }

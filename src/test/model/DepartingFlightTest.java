@@ -65,4 +65,18 @@ public class DepartingFlightTest {
         assertEquals("CANCELLED", testDepartingFlight2.getStatus());
         assertEquals("xx:xx", testDepartingFlight2.getEstimatedDepartureTime());
     }
+
+    @Test
+    public void TestSetEstimatedDepartingTimeWhenFlightAlreadyCancelled() {
+        DepartingFlight testDepartingFlight1 = new DepartingFlight(
+                "Air Canada",
+                458,
+                "Vancouver",
+                "CANCELLED",
+                "07:50",
+                "07:57");
+
+        testDepartingFlight1.setEstimatedDepartureTime("08:30");
+        assertEquals("xx:xx", testDepartingFlight1.getEstimatedDepartureTime());
+    }
 }

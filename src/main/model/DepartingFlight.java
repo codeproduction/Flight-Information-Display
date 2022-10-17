@@ -70,12 +70,18 @@ public class DepartingFlight implements Flight {
         return estimatedDepartureTime;
     }
 
+    // todo maybe: add if clause(s) - might need to use a regex expression
     // MODIFIES: this
     // REQUIRES: if status => Cancelled, then time must be input as "xx:xx"
     //           AND time must be String of format "HH:mm"
-    // todo maybe: add if clause(s) - might need to use a regex expression
+    // EFFECTS: Sets ETD to given time if status not already "Cancelled" otherwise sets it
+    //          to "xx:xx"
     public void setEstimatedDepartureTime(String estimatedDepartureTime) {
-        this.estimatedDepartureTime = estimatedDepartureTime;
+        if (this.getStatus().equals("CANCELLED")) {
+            this.estimatedDepartureTime = "xx:xx";
+        } else {
+            this.estimatedDepartureTime = estimatedDepartureTime;
+        }
     }
 
     public String getScheduledDepartureTime() {
