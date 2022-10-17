@@ -5,10 +5,10 @@
 **What will the application do?**  
 
 - It will display Flights and information related to their departure and arrival timings.
-- It will display simple statistics regarding the performance of the flights
 - It can be edited by the airport staff in order to update status of Flights and also to add or remove Flights
 - It will display the current time, and possibly time in the GMT 0 time zone
 - It will be useful for hotels with large amount of guests staying for short period of time
+- It might be able to display simple statistics regarding the performance of the flights
 
 **Who will use it?**
 
@@ -23,9 +23,11 @@
 
 ## User Stories
 
-- As a user, I shall be able to add a Flight to the FlightDisplay
-- As a user, I shall be able to update the arrival and departure status and other information of individual flights
-- As a user, I shall be able to view summary statistics of flight performances
-- As a user, I shall be able to remove a Flight from the list of flights displayed on the FlightDisplay
-- As a user, I want to be able to add emergency passenger alerts in a separate section on the FlightDisplay if needed
-- As a user, I could add local points of interest e.g. shopping centers, malls, schools, etc
+- As a user, I shall be able to add an ArrivingFlight to the FlightDisplay
+- As a user, I shall be able to add a DepartingFlight to the FlightDisplay
+- As a user, I shall be able to update the arrival and departure status and estimated arrival and departure times 
+  of individual flights
+- As a user, I shall be able to remove a Flight(Departing&Arriving) from the list of flights displayed on the
+ FlightDisplay
+- As a user, I want to be able to add and remove emergency passenger alerts in a separate section on the FlightDisplay
+  if needed

@@ -8,22 +8,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+// Console-driven Flight Information Display application
 public class FlightDisplay {
-    /*
-     * todo later...: summary statistics
-     */
+    /* todo later...: summary statistics (if complex features incorporated) */
 
     protected List<ArrivingFlight> arrivingFlights;
     protected List<DepartingFlight> departingFlights;
     private List<Alert> emergencyAlerts;
     private Scanner input;
 
+    // EFFECTS: calls runFlightDisplay which initiates the application
     public FlightDisplay() {
         runFlightDisplay();
     }
 
+    /**
+     * NOTE TO GRADERS: The runFlightDisplay() method's while loop and initializeSetup,
+     *                  printFlightDisplay and executeUserCommand method
+     *                  [generally runFlightMethod()] were inspired by similar methods
+     *                  found in the Teller application provided as example on the edX
+     *                  course page
+     */
     // MODIFIES: this
-    // EFFECTS: Runs the application which will set up the FlightDisplay using information from user
+    // EFFECTS: Runs the application which will set up the FlightDisplay utilizing input from user
+    //          Loop runs until user chooses to quit
+    //          Initializes setup for application to run and displays menu
+    //          Prints FlightDisplay after each option in menu
     private void runFlightDisplay() {
         /*
          * 1. Initialize setup
@@ -49,7 +59,7 @@ public class FlightDisplay {
         }
     }
 
-    // MODIFIES: Fields of the class FlightList
+    // MODIFIES: this and Fields of all Flight Lists and Alert lists
     // EFFECTS: Initializes lists of Flights and emergency Alerts
     private void initializeSetup() {
         arrivingFlights = new ArrayList<>();
@@ -76,9 +86,9 @@ public class FlightDisplay {
         System.out.println("\tl => end program");
     }
 
-    // REQUIRES:
-    // MODIFIES
-    // EFFECTS
+    // REQUIRES: Letter from a to k - can be both lower and upper case
+    // MODIFIES: this
+    // EFFECTS: Processes user command and executes relevant process/method
     private void executeUserCommand(String action) {
         if (action.equals("a")) {
             addArrivingFlight();
@@ -105,27 +115,37 @@ public class FlightDisplay {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: Prints FlightDisplay
     private void printFlightDisplay() {
-        System.out.println("ARRIVALS: ");
+        System.out.println("ARRIVALS: (Airline, Flight Number, Origin, Status, Scheduled Arrival Time, "
+                            + "Estimated Arrival Time)");
         printAllArrivingFlights();
-        System.out.println("DEPARTURES: ");
+        System.out.println("DEPARTURES: (Airline, Flight Number, Destination, Status, Scheduled Departure Time, "
+                            + "Estimated Departure Time)");
         printAllDepartingFlights();
         System.out.println("EMERGENCY ALERTS: ");
         printAllEmergencyAlerts();
     }
 
+    // MODIFIES: this
+    // EFFECTS: Prints all Arriving Flights
     private void printAllArrivingFlights() {
         for (ArrivingFlight flight : arrivingFlights) {
             System.out.println(printArrivingFlight(flight));
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: Prints all Departing Flights
     private void printAllDepartingFlights() {
         for (DepartingFlight flight : departingFlights) {
             System.out.println(printDepartingFlight(flight));
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: Prints all Alerts
     private void printAllEmergencyAlerts() {
         for (Alert alert : emergencyAlerts) {
             printEmergencyAlert(alert);
@@ -133,6 +153,8 @@ public class FlightDisplay {
     }
 
 
+    // MODIFIES: this
+    // EFFECTS: Adds Alerts to List of Alerts
     private void addEmergencyAlert() {
         System.out.println("Please type the emergency alert you would like to display");
         String alertString = input.next();
@@ -141,9 +163,9 @@ public class FlightDisplay {
         System.out.println("You added the following alert: (" + alert.getAlert() + ")");
     }
 
-    // REQUIRES: alert passed to function must already be contained in the emergencyAlerts list
-    // MODIFIES: List<String> emergencyAlerts
-    // EFFECTS: removes specified alert
+    // REQUIRES: alert and its ID must already be contained in the emergencyAlerts list
+    // MODIFIES: this and List<String> emergencyAlerts
+    // EFFECTS: Removes specified alert from List<Alert> emergencyAlerts
     private void removeEmergencyAlert() {
         System.out.println("Please type the id of the emergency alert you would like to remove");
         int alertId = input.nextInt();
@@ -152,6 +174,9 @@ public class FlightDisplay {
         System.out.println("You removed the following alert: (" + removeAlert.getAlert() + ")");
     }
 
+    // REQUIRES: alert ID must already be contained in the emergencyAlerts List
+    // MODIFIES: this
+    // EFFECTS: returns Alert with given alertId from List emergencyAlerts
     private Alert findAndReturnAlert(int alertId) {
         Alert requiredAlert = null;
         for (Alert alert : emergencyAlerts) {
@@ -162,7 +187,7 @@ public class FlightDisplay {
         return requiredAlert;
     }
 
-
+    // TODO maybe: could add check for this
     // REQUIRES: a flight not already in the list
     // MODIFIES: this
     // EFFECTS: adds an arriving flight to the list
@@ -185,6 +210,9 @@ public class FlightDisplay {
         System.out.println("You added: (" + printArrivingFlight(newFlight) + ")");
     }
 
+    // REQUIRES: Flight input must already be in List ArrivingFlights
+    // MODIFIES: this
+    // EFFECTS: updates status and ETA of input flight according to user input
     private void updateArrivingFlight() {
         System.out.println("Please enter flight number of flight you would like to update ETA of: ");
         int flightToUpdate = input.nextInt();
@@ -198,16 +226,22 @@ public class FlightDisplay {
         System.out.println("New updated flight: (" + printArrivingFlight(flightToBeUpdated) + ")");
     }
 
-    private ArrivingFlight searchAndReturnArrFlight(int flightToUpdate) {
+    // REQUIRES: Given flightNumber must already be contained in the ArrivingFlights List
+    // MODIFIES: this
+    // EFFECTS: returns ArrivingFlight with given flightNumber from List arrivingFlights
+    private ArrivingFlight searchAndReturnArrFlight(int noOfFlightToUpdate) {
         ArrivingFlight requiredFlight = null;
         for (ArrivingFlight flight : arrivingFlights) {
-            if (flight.getFlightNumber() == flightToUpdate) {
+            if (flight.getFlightNumber() == noOfFlightToUpdate) {
                 requiredFlight = flight;
             }
         }
         return requiredFlight;
     }
 
+    // REQUIRES: Given flightNumber must already be contained in the DepartingFlights List
+    // MODIFIES: this
+    // EFFECTS: returns DepartingFlight with given flightNumber from List departingFlights
     private DepartingFlight searchAndReturnDepFlight(int flightToUpdate) {
         DepartingFlight requiredFlight = null;
         for (DepartingFlight flight : departingFlights) {
@@ -218,16 +252,19 @@ public class FlightDisplay {
         return requiredFlight;
     }
 
+    // REQUIRES: Flight passed to function must be in List arrivingFlights
+    // MODIFIES: this
+    // EFFECTS: updates time and also status of given flight to "cancelled"
     private void cancelArrivingFlight() {
         System.out.println("Please input flight number for which you would like to update status to CANCELLED");
         int newCancelFlight = input.nextInt();
         ArrivingFlight flightToCancel = searchAndReturnArrFlight(newCancelFlight);
-        flightToCancel.setStatus("CANCELLED");
+        flightToCancel.cancelFlight(flightToCancel);
     }
 
     // REQUIRES: a flight already in the list
     // MODIFIES: this
-    // EFFECTS: removes an arriving flight to the list
+    // EFFECTS: removes an arriving flight from the List arrivingFlights
     private void removeArrivingFlight() {
         System.out.println("Please input flight number for which you would like to remove");
         int flightToRemove = input.nextInt();
@@ -238,7 +275,7 @@ public class FlightDisplay {
 
     // REQUIRES: a flight not already in the list
     // MODIFIES: this
-    // EFFECTS: adds a departing flight to the list
+    // EFFECTS: adds a departing flight to the departingFlights
     private void addDepartingFlight() {
         System.out.println("Please enter airline");
         String airline = input.next().toUpperCase();
@@ -258,6 +295,9 @@ public class FlightDisplay {
         System.out.println("You added: (" + printDepartingFlight(newFlight) + ")");
     }
 
+    // REQUIRES: Flight input must already be in List departingFlights
+    // MODIFIES: this
+    // EFFECTS: updates status and ETD of input flight according to user input
     private void updateDepartingFlight() {
         System.out.println("Please enter flight number of flight you would like to update ETD of: ");
         int flightToUpdate = input.nextInt();
@@ -271,16 +311,19 @@ public class FlightDisplay {
         System.out.println("New updated flight: (" + printDepartingFlight(flightToBeUpdated) + ")");
     }
 
+    // REQUIRES: Flight passed to function must be in List departingFlights
+    // MODIFIES: this
+    // EFFECTS: updates time and also status of given flight to "cancelled"
     private void cancelDepartingFlight() {
         System.out.println("Please input flight number for which you would like to update status to CANCELLED");
         int newCancelFlight = input.nextInt();
         DepartingFlight flightToCancel = searchAndReturnDepFlight(newCancelFlight);
-        flightToCancel.setStatus("CANCELLED");
+        flightToCancel.cancelFlight(flightToCancel);
     }
 
     // REQUIRES: a flight already in the list
     // MODIFIES: this
-    // EFFECTS: removes a departing flight to the list
+    // EFFECTS: removes a departing flight from List departingFlight
     private void removeDepartingFlight() {
         System.out.println("Please input flight number for which you would like to remove");
         int flightToRemove = input.nextInt();
@@ -289,6 +332,9 @@ public class FlightDisplay {
         System.out.println("You removed the following flight: (" + printDepartingFlight(flightToBeRemoved) + ")");
     }
 
+    // REQUIRES: A ArrivingFlight that is already in the List arrivingList
+    // MODIFIES: this
+    // EFFECTS: Prints the information in fields of ArrivingFlight input to flight
     private String printArrivingFlight(ArrivingFlight flight) {
         return flight.getAirline() + ", " + flight.getFlightNumber() + ", " + "Arriving from: "
                 + flight.getOrigin() + ", " + flight.getStatus() + ", " + flight.getScheduledArrivalTime() + ", "
@@ -296,6 +342,10 @@ public class FlightDisplay {
         //return arrFlight;
     }
 
+
+    // REQUIRES: A DepartingFlight that is already in the List departingList
+    // MODIFIES: this
+    // EFFECTS: Prints the information in fields of DepartingFlight input to flight
     private String printDepartingFlight(DepartingFlight flight) {
         return flight.getAirline() + ", " + flight.getFlightNumber() + ", " + "Departing to: "
                 + flight.getDestination() + ", " + flight.getStatus() + ", " + flight.getScheduledDepartureTime() + ", "
@@ -303,6 +353,9 @@ public class FlightDisplay {
         //return depFlight;
     }
 
+    // REQUIRES: Alert must already be in the List emergencyAlerts
+    // MODIFIES: this
+    // EFFECTS: Prints the emergencyAlert with information in both of its instance variables
     private void printEmergencyAlert(Alert alert) {
         System.out.println(alert.getId() + "). " + alert.getAlert());
     }

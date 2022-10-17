@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DepartingFlightTest {
-    private DepartingFlight testDepartingFlight;
+    private DepartingFlight testDepartingFlight0;
 
     @BeforeEach
     void setup() {
-        testDepartingFlight = new DepartingFlight(
+        testDepartingFlight0 = new DepartingFlight(
                 "Air Canada",
                 58,
                 "Vancouver",
@@ -21,19 +21,48 @@ public class DepartingFlightTest {
 
     @Test
     public void testConstructor() {
-        assertEquals("Air Canada", testDepartingFlight.getAirline());
-        assertEquals(58, testDepartingFlight.getFlightNumber());
-        assertEquals("Vancouver", testDepartingFlight.getDestination());
-        assertEquals("On Time", testDepartingFlight.getStatus());
-        assertEquals("07:00", testDepartingFlight.getScheduledDepartureTime());
-        assertEquals("07:07", testDepartingFlight.getEstimatedDepartureTime());
+        assertEquals("Air Canada", testDepartingFlight0.getAirline());
+        assertEquals(58, testDepartingFlight0.getFlightNumber());
+        assertEquals("Vancouver", testDepartingFlight0.getDestination());
+        assertEquals("On Time", testDepartingFlight0.getStatus());
+        assertEquals("07:00", testDepartingFlight0.getScheduledDepartureTime());
+        assertEquals("07:07", testDepartingFlight0.getEstimatedDepartureTime());
     }
 
     @Test
     public void TestCancelFlight() {
-        testDepartingFlight.cancelFlight(testDepartingFlight);
+        testDepartingFlight0.cancelFlight(testDepartingFlight0);
 
-        assertEquals("CANCELLED", testDepartingFlight.getStatus());
-        assertEquals("XX:XX", testDepartingFlight.getEstimatedDepartureTime());
+        assertEquals("CANCELLED", testDepartingFlight0.getStatus());
+        assertEquals("xx:xx", testDepartingFlight0.getEstimatedDepartureTime());
+    }
+
+    @Test
+    public void TestCancelFlightMultipleTimes() {
+        DepartingFlight testDepartingFlight1 = new DepartingFlight(
+                "Air Canada",
+                558,
+                "Vancouver",
+                "On Time",
+                "07:50",
+                "07:57");
+        DepartingFlight testDepartingFlight2 = new DepartingFlight(
+                "Air Canada",
+                458,
+                "Vancouver",
+                "On Time",
+                "07:50",
+                "07:57");
+
+        testDepartingFlight0.cancelFlight(testDepartingFlight0);
+        testDepartingFlight0.cancelFlight(testDepartingFlight1);
+        testDepartingFlight0.cancelFlight(testDepartingFlight2);
+
+        assertEquals("CANCELLED", testDepartingFlight0.getStatus());
+        assertEquals("xx:xx", testDepartingFlight0.getEstimatedDepartureTime());
+        assertEquals("CANCELLED", testDepartingFlight1.getStatus());
+        assertEquals("xx:xx", testDepartingFlight1.getEstimatedDepartureTime());
+        assertEquals("CANCELLED", testDepartingFlight2.getStatus());
+        assertEquals("xx:xx", testDepartingFlight2.getEstimatedDepartureTime());
     }
 }

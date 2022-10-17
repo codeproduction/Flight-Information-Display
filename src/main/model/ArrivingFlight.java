@@ -1,6 +1,7 @@
 package model;
 
-// Represents a flight having an airline, flight number, origin, scheduled arrival time & estimated arrival time
+// Represents an arriving flight having an airline, flight number, origin, scheduled arrival time &
+// estimated arrival time
 public class ArrivingFlight implements Flight {
     private String airline;
     private int flightNumber;
@@ -9,10 +10,13 @@ public class ArrivingFlight implements Flight {
     private String scheduledArrivalTime;
     private String estimatedArrivalTime;
 
-    // REQUIRES: flightNumber is int of max three digits length, min one digit,
-    //           status is one of four possible status (On time, Early, Delayed, Cancelled),
-    //           scheduledArrivalTime and estimatedArrivalTime must be in 24-hour format (xx:xx)
-    //           origin, status, airline must be non-empty string
+    /*
+     * REQUIRES: - flightNumber is int of max three digits length and min one digit
+     *           - status is one of four possible status (On time, Early, Delayed, Cancelled),
+     *           - scheduledArrivalTime and estimatedArrivalTime must be in 24-hour format (xx:xx)
+     *           - origin, status, airline must be non-empty string
+     * EFFECTS: Creates an instance of an arriving flight, with field values set from user input
+     */
     public ArrivingFlight(String airline, int flightNumber, String origin, String status,
                           String scheduledArrivalTime, String estimatedArrivalTime) {
         this.airline = airline;
@@ -23,9 +27,15 @@ public class ArrivingFlight implements Flight {
         this.estimatedArrivalTime = estimatedArrivalTime;
     }
 
+    /*
+     * REQUIRES: an ArrivingFlight with any status other than "Cancelled"
+     * MODIFIES: this
+     * EFFECTS: sets status of flight to "CANCELLED" AND sets estimatedArrivalTime of
+     *          the arriving flight to xx:xx
+     */
     public void cancelFlight(ArrivingFlight flight) {
         flight.setStatus("CANCELLED");
-        flight.setEstimatedArrivalTime("XX:XX");
+        flight.setEstimatedArrivalTime("xx:xx");
     }
 
     // getters and setters
@@ -35,27 +45,12 @@ public class ArrivingFlight implements Flight {
     }
 
     @Override
-    public void setAirline(String airline) {
-        this.airline = airline;
-    }
-
-    @Override
     public int getFlightNumber() {
         return flightNumber;
     }
 
-    @Override
-    // REQUIRES: flight number of max three digits length && min one digit
-    public void setFlightNumber(int flightNumber) {
-        this.flightNumber = flightNumber;
-    }
-
     public String getOrigin() {
         return origin;
-    }
-
-    public void setOrigin(String origin) {
-        this.origin = origin;
     }
 
     @Override
@@ -64,24 +59,25 @@ public class ArrivingFlight implements Flight {
     }
 
     @Override
+    // MODIFIES: this
     // REQUIRES: one of four statuses (On time, Early, Delayed, Cancelled)
+    // todo maybe: if statemt could be added. add checks elsewhere
     public void setStatus(String status) {
         this.status = status;
     }
 
     public String getScheduledArrivalTime() {
-        return scheduledArrivalTime;
-    }
-
-    public void setScheduledArrivalTime(String scheduledArrivalTime) {
-        this.scheduledArrivalTime = scheduledArrivalTime;
+        return this.scheduledArrivalTime;
     }
 
     public String getEstimatedArrivalTime() {
         return estimatedArrivalTime;
     }
 
+    // MODIFIES: this
     // REQUIRES: if status => Cancelled, then time must be input as "xx:xx"
+    //           AND time must be String of format "HH:mm"
+    // todo maybe: add if clause(s) - might need to use a regex expression
     public void setEstimatedArrivalTime(String estimatedArrivalTime) {
         this.estimatedArrivalTime = estimatedArrivalTime;
     }
