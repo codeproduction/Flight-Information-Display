@@ -82,4 +82,18 @@ public class ArrivingFlightTest {
         assertEquals("xx:xx", testArrivingFlight1.getEstimatedArrivalTime());
     }
 
+    @Test
+    public void TestSetEstimatedArrivalTimeWhenFlightNotAlreadyCancelled() {
+        ArrivingFlight testArrivingFlight5 = new ArrivingFlight(
+                "Air Canada",
+                567,
+                "Vancouver",
+                "DELAYED",
+                "07:50",
+                "07:57");
+
+        testArrivingFlight5.setEstimatedArrivalTime("08:30");
+        assertEquals("08:30", testArrivingFlight5.getEstimatedArrivalTime());
+    }
+
 }
