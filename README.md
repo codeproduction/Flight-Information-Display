@@ -31,3 +31,7 @@
  FlightDisplay
 - As a user, I want to be able to add and remove emergency passenger alerts in a separate section on the FlightDisplay
   if needed
+- As a user, I want to be able to save the entire state of the most recent update flight information display to file
+- As a user, I want to be able to load a saved state of the flight information display from the last time it was run 
+  from file and resume exactly from where left off.
+
