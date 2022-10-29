@@ -1,7 +1,10 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 // Alert is (int index, String alert) and a data type for representing alerts with associated methods
-public class Alert {
+public class Alert implements Writable {
     private static int nextAlertId = 1;
     private int id;
     private String alert;
@@ -10,6 +13,13 @@ public class Alert {
     // EFFECTS: creates an instance of an Alert object
     public Alert(String alert) {
         id = nextAlertId++;
+        this.alert = alert;
+    }
+
+    // REQUIRES: Non-empty String and an integer ID
+    // EFFECTS: creates an instance of an Alert object
+    public Alert(int id, String alert) {
+        this.id = id;
         this.alert = alert;
     }
 
@@ -28,6 +38,14 @@ public class Alert {
 
     public String getAlert() {
         return alert;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("ID", id);
+        json.put("Alert", alert);
+        return json;
     }
 
 }

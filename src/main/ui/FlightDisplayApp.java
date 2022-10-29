@@ -3,22 +3,34 @@ package ui;
 import model.Alert;
 import model.ArrivingFlight;
 import model.DepartingFlight;
+import model.FlightDisplay;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
-// Console-driven Flight Information Display application
-public class FlightDisplay {
+// Console-driven Flight Information Display application which represents a Flight Information Display
+public class FlightDisplayApp {
     /* todo later...: summary statistics (if complex features incorporated) */
-
-    protected List<ArrivingFlight> arrivingFlights;
-    protected List<DepartingFlight> departingFlights;
-    private List<Alert> emergencyAlerts;
+    // JSON fields (added after starting phase 2)
+    private static final String JSON_STORE = "./data/workroom.json";
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
+    private FlightDisplay flightDisplay;
+    // old fields
+//    protected List<ArrivingFlight> arrivingFlights;
+//    protected List<DepartingFlight> departingFlights;
+//    private List<Alert> emergencyAlerts;
     private Scanner input;
 
     // EFFECTS: calls runFlightDisplay which initiates the application
-    public FlightDisplay() {
+    public FlightDisplayApp() {
+        flightDisplay = new FlightDisplay();
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
         runFlightDisplay();
     }
 
@@ -28,6 +40,8 @@ public class FlightDisplay {
      *                  [generally runFlightMethod()] were inspired by similar methods
      *                  found in the Teller application provided as example on the edX
      *                  course page
+     *                  Also, the separation of FlightDisplay and FlightDisplayApp was taken from Json Demo provided to
+     *                  students of CPSC 210.
      */
     // MODIFIES: this
     // EFFECTS: Runs the application which will set up the FlightDisplay utilizing input from user
@@ -49,7 +63,7 @@ public class FlightDisplay {
             option = input.next();
             option = option.toLowerCase();
 
-            if (option.equals("l")) {
+            if (option.equals("n")) {
                 isDisplayNeeded = false;
             } else {
                 executeUserCommand(option);
@@ -62,9 +76,6 @@ public class FlightDisplay {
     // MODIFIES: this and Fields of all Flight Lists and Alert lists
     // EFFECTS: Initializes lists of Flights and emergency Alerts
     private void initializeSetup() {
-        arrivingFlights = new ArrayList<>();
-        departingFlights = new ArrayList<>();
-        emergencyAlerts = new ArrayList<>();
         input = new Scanner(System.in);
         input.useDelimiter("\n");
     }
@@ -83,12 +94,16 @@ public class FlightDisplay {
         System.out.println("\ti => add emergency alert");
         System.out.println("\tj => remove emergency alert");
         System.out.println("\tk => print all flights");
-        System.out.println("\tl => end program");
+        System.out.println("\tl => save flight display to file");
+        System.out.println("\tm => load flight display from file");
+        System.out.println("\tn => end program");
     }
 
-    // REQUIRES: Letter from a to k - can be both lower and upper case
+    // REQUIRES: Letter from a to k - can be both lower and upper casea
     // MODIFIES: this
     // EFFECTS: Processes user command and executes relevant process/method
+
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     private void executeUserCommand(String action) {
         if (action.equals("a")) {
             addArrivingFlight();
@@ -110,8 +125,10 @@ public class FlightDisplay {
             addEmergencyAlert();
         } else if (action.equals("j")) {
             removeEmergencyAlert();
-        } else if (action.equals("k")) {
-            printFlightDisplay();
+        } else if (action.equals("l")) {
+            saveFlightDisplay();
+        } else if (action.equals("m")) {
+            loadFlightDisplay();
         }
     }
 
@@ -131,6 +148,7 @@ public class FlightDisplay {
     // MODIFIES: this
     // EFFECTS: Prints all Arriving Flights
     private void printAllArrivingFlights() {
+        List<ArrivingFlight> arrivingFlights = flightDisplay.getArrivingFlights();
         for (ArrivingFlight flight : arrivingFlights) {
             System.out.println(printArrivingFlight(flight));
         }
@@ -139,6 +157,7 @@ public class FlightDisplay {
     // MODIFIES: this
     // EFFECTS: Prints all Departing Flights
     private void printAllDepartingFlights() {
+        List<DepartingFlight> departingFlights = flightDisplay.getDepartingFlights();
         for (DepartingFlight flight : departingFlights) {
             System.out.println(printDepartingFlight(flight));
         }
@@ -147,6 +166,7 @@ public class FlightDisplay {
     // MODIFIES: this
     // EFFECTS: Prints all Alerts
     private void printAllEmergencyAlerts() {
+        List<Alert> emergencyAlerts = flightDisplay.getEmergencyAlerts();
         for (Alert alert : emergencyAlerts) {
             printEmergencyAlert(alert);
         }
@@ -159,7 +179,7 @@ public class FlightDisplay {
         System.out.println("Please type the emergency alert you would like to display");
         String alertString = input.next();
         Alert alert = new Alert(alertString);
-        emergencyAlerts.add(alert);
+        flightDisplay.addEmergencyAlert(alert);
         System.out.println("You added the following alert: (" + alert.getAlert() + ")");
     }
 
@@ -170,7 +190,7 @@ public class FlightDisplay {
         System.out.println("Please type the id of the emergency alert you would like to remove");
         int alertId = input.nextInt();
         Alert removeAlert = findAndReturnAlert(alertId);
-        emergencyAlerts.remove(removeAlert);
+        flightDisplay.removeEmergencyAlert(removeAlert);
         System.out.println("You removed the following alert: (" + removeAlert.getAlert() + ")");
     }
 
@@ -179,6 +199,7 @@ public class FlightDisplay {
     // EFFECTS: returns Alert with given alertId from List emergencyAlerts
     private Alert findAndReturnAlert(int alertId) {
         Alert requiredAlert = null;
+        List<Alert> emergencyAlerts = flightDisplay.getEmergencyAlerts();
         for (Alert alert : emergencyAlerts) {
             if (alert.getId() == alertId) {
                 requiredAlert = alert;
@@ -206,7 +227,7 @@ public class FlightDisplay {
         String estimatedTime = input.next();
         ArrivingFlight newFlight = new ArrivingFlight(airline, flightNumber, origin, status, scheduledTime,
                                        estimatedTime);
-        arrivingFlights.add(newFlight);
+        flightDisplay.addArrivingFlight(newFlight);
         System.out.println("You added: (" + printArrivingFlight(newFlight) + ")");
     }
 
@@ -231,6 +252,7 @@ public class FlightDisplay {
     // EFFECTS: returns ArrivingFlight with given flightNumber from List arrivingFlights
     private ArrivingFlight searchAndReturnArrFlight(int noOfFlightToUpdate) {
         ArrivingFlight requiredFlight = null;
+        List<ArrivingFlight> arrivingFlights = flightDisplay.getArrivingFlights();
         for (ArrivingFlight flight : arrivingFlights) {
             if (flight.getFlightNumber() == noOfFlightToUpdate) {
                 requiredFlight = flight;
@@ -244,6 +266,7 @@ public class FlightDisplay {
     // EFFECTS: returns DepartingFlight with given flightNumber from List departingFlights
     private DepartingFlight searchAndReturnDepFlight(int flightToUpdate) {
         DepartingFlight requiredFlight = null;
+        List<DepartingFlight> departingFlights = flightDisplay.getDepartingFlights();
         for (DepartingFlight flight : departingFlights) {
             if (flight.getFlightNumber() == flightToUpdate) {
                 requiredFlight = flight;
@@ -269,7 +292,7 @@ public class FlightDisplay {
         System.out.println("Please input flight number for which you would like to remove");
         int flightToRemove = input.nextInt();
         ArrivingFlight flightToBeRemoved = searchAndReturnArrFlight(flightToRemove);
-        arrivingFlights.remove(flightToBeRemoved);
+        flightDisplay.removeArrivingFlight(flightToBeRemoved);
         System.out.println("You removed the following flight: (" + printArrivingFlight(flightToBeRemoved) + ")");
     }
 
@@ -291,7 +314,7 @@ public class FlightDisplay {
         String estimatedTime = input.next();
         DepartingFlight newFlight = new DepartingFlight(airline, flightNumber, destination, status, scheduledTime,
                                                         estimatedTime);
-        departingFlights.add(newFlight);
+        flightDisplay.addDepartingFlight(newFlight);
         System.out.println("You added: (" + printDepartingFlight(newFlight) + ")");
     }
 
@@ -328,7 +351,7 @@ public class FlightDisplay {
         System.out.println("Please input flight number for which you would like to remove");
         int flightToRemove = input.nextInt();
         DepartingFlight flightToBeRemoved = searchAndReturnDepFlight(flightToRemove);
-        departingFlights.remove(flightToBeRemoved);
+        flightDisplay.removeDepartingFlight(flightToBeRemoved);
         System.out.println("You removed the following flight: (" + printDepartingFlight(flightToBeRemoved) + ")");
     }
 
@@ -339,7 +362,6 @@ public class FlightDisplay {
         return flight.getAirline() + ", " + flight.getFlightNumber() + ", " + "Arriving from: "
                 + flight.getOrigin() + ", " + flight.getStatus() + ", " + flight.getScheduledArrivalTime() + ", "
                 + flight.getEstimatedArrivalTime();
-        //return arrFlight;
     }
 
 
@@ -350,7 +372,6 @@ public class FlightDisplay {
         return flight.getAirline() + ", " + flight.getFlightNumber() + ", " + "Departing to: "
                 + flight.getDestination() + ", " + flight.getStatus() + ", " + flight.getScheduledDepartureTime() + ", "
                 + flight.getEstimatedDepartureTime();
-        //return depFlight;
     }
 
     // REQUIRES: Alert must already be in the List emergencyAlerts
@@ -358,5 +379,30 @@ public class FlightDisplay {
     // EFFECTS: Prints the emergencyAlert with information in both of its instance variables
     private void printEmergencyAlert(Alert alert) {
         System.out.println(alert.getId() + "). " + alert.getAlert());
+    }
+
+    // JSON methods:
+
+    // EFFECTS: saves the flight display to file
+    private void saveFlightDisplay() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(flightDisplay);
+            jsonWriter.close();
+            System.out.println("Saved " + /* flight display.getName() +*/ " to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads workroom from file
+    private void loadFlightDisplay() {
+        try {
+            flightDisplay = jsonReader.read();
+            System.out.println("Loaded Flight Information Display from " + JSON_STORE);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_STORE);
+        }
     }
 }

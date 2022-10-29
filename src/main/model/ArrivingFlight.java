@@ -1,8 +1,11 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 // Represents an arriving flight having an airline, flight number, origin, scheduled arrival time &
 // estimated arrival time
-public class ArrivingFlight implements Flight {
+public class ArrivingFlight implements Flight, Writable {
     private String airline;
     private int flightNumber;
     private String origin;
@@ -86,5 +89,17 @@ public class ArrivingFlight implements Flight {
         } else {
             this.estimatedArrivalTime = estimatedArrivalTime;
         }
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("Airline", airline);
+        json.put("Flight Number", flightNumber);
+        json.put("Origin", origin);
+        json.put("Status", status);
+        json.put("Scheduled Arrival Time", scheduledArrivalTime);
+        json.put("Estimated Arrival Time", estimatedArrivalTime);
+        return json;
     }
 }

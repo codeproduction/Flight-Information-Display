@@ -1,0 +1,20 @@
+{
+  "Arriving Flights": [{
+    "Flight Number": 111,
+    "Origin": "doha",
+    "Status": "DELAYED",
+    "Airline": "PIA",
+    "Scheduled Arrival Time": "11:11",
+    "Estimated Arrival Time": "11:11"
+  }],
+  "Emergency Alerts": [{"Alert": "Alert xyz",
+                        "ID": 1}],
+  "Departing Flights": [{
+    "Flight Number": 112,
+    "Status": "DELAYED",
+    "Destination": "abu dhabi",
+    "Estimated Departure Time": "11:11",
+    "Airline": "PIA",
+    "Scheduled Departure Time": "11:11"
+  }]
+}

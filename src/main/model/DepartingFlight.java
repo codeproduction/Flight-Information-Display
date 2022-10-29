@@ -1,8 +1,11 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 // Represents a departing flight having an airline, flight number, origin, scheduled Departing time &
 // estimated Departing time
-public class DepartingFlight implements Flight {
+public class DepartingFlight implements Flight, Writable {
     private String airline;
     private int flightNumber;
     private String destination;
@@ -86,6 +89,18 @@ public class DepartingFlight implements Flight {
 
     public String getScheduledDepartureTime() {
         return scheduledDepartureTime;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("Airline", airline);
+        json.put("Flight Number", flightNumber);
+        json.put("Destination", destination);
+        json.put("Status", status);
+        json.put("Scheduled Departure Time", scheduledDepartureTime);
+        json.put("Estimated Departure Time", estimatedDepartureTime);
+        return json;
     }
 }
 

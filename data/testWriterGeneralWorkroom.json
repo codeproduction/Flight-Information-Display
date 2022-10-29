@@ -1,0 +1,22 @@
+{
+    "Arriving Flights": [{
+        "Flight Number": 444,
+        "Origin": "Doha",
+        "Status": "Delayed",
+        "Airline": "KLM",
+        "Scheduled Arrival Time": "11:22",
+        "Estimated Arrival Time": "11:44"
+    }],
+    "Emergency Alerts": [{
+        "Alert": "Alert abc",
+        "ID": 19
+    }],
+    "Departing Flights": [{
+        "Flight Number": 444,
+        "Status": "Delayed",
+        "Destination": "Doha",
+        "Estimated Departure Time": "11:44",
+        "Airline": "KLM",
+        "Scheduled Departure Time": "11:22"
+    }]
+}
