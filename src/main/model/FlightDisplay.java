@@ -60,6 +60,12 @@ public class    FlightDisplay implements Writable {
         emergencyAlerts.remove(alert);
     }
 
+    // REQUIRES: ID and alert associated with it must already be contained in the emergencyAlerts list
+    // MODIFIES: this and List<String> emergencyAlerts
+    // EFFECTS: Removes specified alert from List<Alert> emergencyAlerts
+    public void removeEmergencyAlert(int alertID) {
+        emergencyAlerts.removeIf(emgAlert -> alertID == emgAlert.getId());
+    }
     // REQUIRES: a flight already in the list
     // MODIFIES: this
     // EFFECTS: removes an arriving flight from the List arrivingFlights

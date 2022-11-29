@@ -1,14 +1,16 @@
 package ui;
 
-import model.ArrivingFlight;
-import model.DepartingFlight;
-import model.FlightDisplay;
+import model.*;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
@@ -33,8 +35,11 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
     JTable table2;
     DefaultTableModel modelTable2;
     FlightDisplay fd;
-    //static JFrame frame;
+    private static final String JSON_STORE = "./data/workroom.json";
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
     GridBagConstraints gbc = new GridBagConstraints();
+    //static JFrame frame;
 
     public static void main(String[] args) {
         FlightDisplayGUI m = new FlightDisplayGUI();
@@ -52,6 +57,8 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     public FlightDisplayGUI() {
         fd = new FlightDisplay();
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
         setLayout(new GridBagLayout());
 
         String[] columnNames = {"Airline",
@@ -66,26 +73,52 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         Object[][] alertData = {};
 
         JPanel arrFlightsPanel = new JPanel();
-        table = new JTable(new DefaultTableModel(data, columnNames));
+        table = new JTable(new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        });
+        table.setFocusable(false);
+        table.setRowSelectionAllowed(false);
         table.setPreferredScrollableViewportSize(new Dimension(770, 150));
         table.setFillsViewportHeight(true);
         modelTable = (DefaultTableModel) table.getModel();
-        //modelTable.addRow(new Object[]{"Column 1", "Column 2", "Column 3"});
 
         arrFlightsPanel.add(new JScrollPane(table, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
         JPanel depFlightsPanel = new JPanel();
-        table1 = new JTable(new DefaultTableModel(data, columnNames));
+        table1 = new JTable(new DefaultTableModel(data, columnNames) {
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        });
         table1.setPreferredScrollableViewportSize(new Dimension(770, 150));
         table1.setFillsViewportHeight(true);
+        table1.setFocusable(false);
+        table1.setRowSelectionAllowed(false);
         modelTable1 = (DefaultTableModel) table1.getModel();
+
         depFlightsPanel.add(new JScrollPane(table1, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
         JPanel emgAlertsPanel = new JPanel();
-        table2 = new JTable(new DefaultTableModel(data, alertColumnNames));
+        table2 = new JTable(new DefaultTableModel(data, alertColumnNames) {
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
+            }
+        });
         table2.setPreferredScrollableViewportSize(new Dimension(770, 150));
         table2.setFillsViewportHeight(true);
-        modelTable1 = (DefaultTableModel) table1.getModel();
+        table2.setFocusable(false);
+        table2.setRowSelectionAllowed(false);
+        modelTable2 = (DefaultTableModel) table2.getModel();
         emgAlertsPanel.add(new JScrollPane(table2, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
         JLabel arrFlightsLabel = new JLabel("    Arriving Flights");
@@ -183,11 +216,13 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         gbc.gridy = 0;
         emergencyAlertButtons.add(alertRemoveButton, gbc);
         JButton saveButton = new JButton("Save to File");
+        saveButton.addActionListener(this);
         gbc.gridx = 0;
         gbc.gridy = 6;
         //gbc.anchor = GridBagConstraints.PAGE_END;
         emergencyAlertButtons.add(saveButton, gbc);
         JButton loadButton = new JButton("Load from File");
+        loadButton.addActionListener(this);
         gbc.gridx = 1;
         gbc.gridy = 6;
         emergencyAlertButtons.add(loadButton, gbc);
@@ -231,6 +266,7 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
     }
 
 
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Add Arriving Flight")) {
@@ -281,23 +317,26 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
 
         } else if (e.getActionCommand().equals("Update Arriving Flight")) {
 
-            String rowOfFlightToUpdate = JOptionPane.showInputDialog("Please Input flightNumber");
-            String statusToUpdate = JOptionPane.showInputDialog("Please Input status");
-            String estimatedArrivalTimeToUpdate = JOptionPane.showInputDialog("Please Input estimatedArrivalTime");
+            String rowOfFlightToUpdate = JOptionPane.showInputDialog("Please Input row number of the flight"
+                    + " you wish to update");
+            String statusToUpdate = JOptionPane.showInputDialog("Please Input new status");
+            String estimatedArrivalTimeToUpdate = JOptionPane.showInputDialog("Please Input new estimatedArrivalTime");
 
             if (!rowOfFlightToUpdate.equals("") && !statusToUpdate.equals("")
                     && !estimatedArrivalTimeToUpdate.equals("")) {
                 modelTable.setValueAt(statusToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 3);
                 modelTable.setValueAt(estimatedArrivalTimeToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 5);
-            }  else {
+            } else {
                 JOptionPane.showMessageDialog(this, "Please click on the 'Update Arriving Flight' "
                         + "button again and enter flight data in all fields");
             }
         } else if (e.getActionCommand().equals("Update Departing Flight")) {
 
-            String rowOfFlightToUpdate = JOptionPane.showInputDialog("Please Input row of flight to update");
-            String statusToUpdate = JOptionPane.showInputDialog("Please Input status");
-            String estimatedDepartureTimeToUpdate = JOptionPane.showInputDialog("Please Input estimatedDepartureTime");
+            String rowOfFlightToUpdate = JOptionPane.showInputDialog("Please Input row number of the flight"
+                    + " you wish to update");
+            String statusToUpdate = JOptionPane.showInputDialog("Please Input new status");
+            String estimatedDepartureTimeToUpdate = JOptionPane.showInputDialog("Please Input new"
+                    + "estimatedDepartureTime");
 
             if (!rowOfFlightToUpdate.equals("") && !statusToUpdate.equals("")
                     && !estimatedDepartureTimeToUpdate.equals("")) {
@@ -307,7 +346,7 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Please click on the 'Update Departing Flight' "
                         + "button again and enter flight data in all fields");
             }
-        }  else if (e.getActionCommand().equals("Cancel Arriving Flight")) {
+        } else if (e.getActionCommand().equals("Cancel Arriving Flight")) {
             String flightNumberToCancel = JOptionPane.showInputDialog("Please Input row of flight to cancel");
 
             if (!flightNumberToCancel.equals("")) {
@@ -343,30 +382,77 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Please click on the 'Remove Arriving Flight' "
                         + "button again and enter flight data in all fields");
             }
-        }  else if (e.getActionCommand().equals("Add Alert")) {
+        } else if (e.getActionCommand().equals("Add Alert")) {
 
-            String alertIDToAdd = JOptionPane.showInputDialog("Please Input alert ID to add");
+            String alertIDToAdd = JOptionPane.showInputDialog("Please Input alert ID to add \n "
+                    + "It should be a positive integer");
             String alertToAdd = JOptionPane.showInputDialog("Please Input alert to add");
 
             if (!alertToAdd.equals("")) {
+                Alert emgAlertToAdd = new Alert(Integer.parseInt(alertIDToAdd), alertToAdd);
                 modelTable2.addRow(new Object[]{alertIDToAdd, alertToAdd});
+                fd.addEmergencyAlert(emgAlertToAdd);
             } else {
                 JOptionPane.showMessageDialog(this, "Please click on the 'Add Alert' "
                         + "button again and enter flight data in all fields");
             }
         } else if (e.getActionCommand().equals("Remove Alert")) {
 
-            String alertToRemove = JOptionPane.showInputDialog("Please Input ID of alert to remove");
+            String rowOfAlertToRemove = JOptionPane.showInputDialog("Please Input row number of alert to remove");
 
             DepartingFlight depFlightToAdd;
-            if (!alertToRemove.equals("")) {
-                // find and return flight to update
-                // update flight
-                // update table
-                int x = 2;
+            if (!rowOfAlertToRemove.equals("")) {
+                int idOfAlertToRemove = Integer.parseInt(modelTable2.getValueAt(
+                        Integer.parseInt(rowOfAlertToRemove) - 1, 0).toString());
+                fd.removeEmergencyAlert(idOfAlertToRemove);
+                modelTable2.removeRow(Integer.parseInt(rowOfAlertToRemove) - 1);
             } else {
                 JOptionPane.showMessageDialog(this, "Please click on the 'Remove Alert' "
                         + "button again and enter flight data in all fields");
+            }
+        } else if (e.getActionCommand().equals("Save to File")) {
+//            JOptionPane.showMessageDialog(this, "Please click on the 'Remove Alert' "
+//                    + "button again and enter flight data in all fields");
+//            String rowOfFlightToUpdate = JOptionPane.showInputDialog("Please Input row number of the flight"
+//                    + " you wish to update");
+            try {
+                jsonWriter.open();
+                jsonWriter.write(fd);
+                jsonWriter.close();
+                System.out.println("Saved " + /* flight display.getName() +*/ " to " + JSON_STORE);
+            } catch (FileNotFoundException exc) {
+                System.out.println("Unable to write to file: " + JSON_STORE);
+            }
+        } else if (e.getActionCommand().equals("Load from File")) {
+            try {
+                fd = jsonReader.read();
+                String[] columnNames = {"Airline",
+                        "Flight Number",
+                        "Origin",
+                        "Status",
+                        "Scheduled Arrival Time",
+                        "Estimated Arrival Time"};
+                Object[][] data = flightTableCreator();
+
+                for (ArrivingFlight arrFlight : fd.getArrivingFlights()) {
+                    modelTable.addRow(new Object[]{arrFlight.getAirline(), arrFlight.getFlightNumber(),
+                            arrFlight.getStatus(), arrFlight.getOrigin(),
+                            arrFlight.getEstimatedArrivalTime(), arrFlight.getScheduledArrivalTime()});
+                }
+
+                for (DepartingFlight depFlight : fd.getDepartingFlights()) {
+                    modelTable1.addRow(new Object[]{depFlight.getAirline(), depFlight.getFlightNumber(),
+                            depFlight.getStatus(), depFlight.getDestination(),
+                            depFlight.getEstimatedDepartureTime(), depFlight.getScheduledDepartureTime()});
+                }
+
+                for (Alert emgAlert : fd.getEmergencyAlerts()) {
+                    modelTable2.addRow(new Object[]{emgAlert.getId(),emgAlert.getAlert()});
+                }
+
+                System.out.println("Loaded Flight Information Display from " + JSON_STORE);
+            } catch (IOException exc) {
+                System.out.println("Unable to read from file: " + JSON_STORE);
             }
         }
     }
