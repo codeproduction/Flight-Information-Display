@@ -6,11 +6,14 @@ import persistence.JsonWriter;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
@@ -39,17 +42,44 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
     GridBagConstraints gbc = new GridBagConstraints();
-    //static JFrame frame;
+    Color airportYellow = new Color(255,233,0);
 
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     public static void main(String[] args) {
-        FlightDisplayGUI m = new FlightDisplayGUI();
+//        JWindow window = new JWindow();
+//        window.getContentPane().add(
+//                new JLabel("", new ImageIcon("flightDisplayGIF.gif"), SwingConstants.CENTER));
+//        window.setBounds(500, 150, 480, 270);
+//        window.setVisible(true);
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        window.setVisible(false);
+//        JFrame newframe = new JFrame();
+//        newframe.add(new JLabel("Welcome"));
+//        newframe.setVisible(true);
+//        newframe.setSize(300,100);
+//        window.dispose();
+        SplashJava splash = new SplashJava();
+        try {
+            // Make JWindow appear for 10 seconds before disappear
+            Thread.sleep(1000);
+            splash.dispose();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        FlightDisplayGUI m = new FlightDisplayGUI();
         JFrame frame = new JFrame();
         frame.setSize(new Dimension(904, 642));
-        frame.setTitle("Manual Attempt");
+        frame.setTitle("YVR Flight Information Display");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setResizable(false);
+        ImageIcon frameIcon = new ImageIcon("src/main/ui/FIDS_Icon.png");
+        frame.setIconImage(frameIcon.getImage());
         frame.add(m);
         frame.pack();
     }
@@ -60,6 +90,7 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         setLayout(new GridBagLayout());
+        setBackground(Color.black);
 
         String[] columnNames = {"Airline",
                 "Flight Number",
@@ -81,12 +112,18 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
             }
         });
         table.setFocusable(false);
+        table.setBackground(Color.black);
+        table.setForeground(airportYellow);
         table.setRowSelectionAllowed(false);
         table.setPreferredScrollableViewportSize(new Dimension(770, 150));
         table.setFillsViewportHeight(true);
+        JTableHeader tableHeader = table.getTableHeader();
+        tableHeader.setBackground(airportYellow);
+        tableHeader.setForeground(Color.black);
         modelTable = (DefaultTableModel) table.getModel();
 
         arrFlightsPanel.add(new JScrollPane(table, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
+        arrFlightsPanel.setBackground(Color.black);
 
         JPanel depFlightsPanel = new JPanel();
         table1 = new JTable(new DefaultTableModel(data, columnNames) {
@@ -101,9 +138,15 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         table1.setFillsViewportHeight(true);
         table1.setFocusable(false);
         table1.setRowSelectionAllowed(false);
+        table1.setBackground(Color.black);
+        table1.setForeground(airportYellow);
+        JTableHeader tableHeader1 = table1.getTableHeader();
+        tableHeader1.setBackground(airportYellow);
+        tableHeader1.setForeground(Color.black);
         modelTable1 = (DefaultTableModel) table1.getModel();
 
         depFlightsPanel.add(new JScrollPane(table1, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
+        depFlightsPanel.setBackground(Color.black);
 
         JPanel emgAlertsPanel = new JPanel();
         table2 = new JTable(new DefaultTableModel(data, alertColumnNames) {
@@ -114,16 +157,25 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
                 return false;
             }
         });
+        table2.setBackground(Color.black);
+        table2.setForeground(airportYellow);
         table2.setPreferredScrollableViewportSize(new Dimension(770, 150));
         table2.setFillsViewportHeight(true);
         table2.setFocusable(false);
         table2.setRowSelectionAllowed(false);
+        JTableHeader tableHeader2 = table2.getTableHeader();
+        tableHeader2.setBackground(airportYellow);
+        tableHeader2.setForeground(Color.black);
         modelTable2 = (DefaultTableModel) table2.getModel();
         emgAlertsPanel.add(new JScrollPane(table2, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
+        emgAlertsPanel.setBackground(Color.black);
 
         JLabel arrFlightsLabel = new JLabel("    Arriving Flights");
+        arrFlightsLabel.setForeground(Color.white);
         JLabel depFlightsLabel = new JLabel("    Departing Flights");
+        depFlightsLabel.setForeground(Color.white);
         JLabel emgAlertsLabel = new JLabel("    Emergency Alerts");
+        emgAlertsLabel.setForeground(Color.white);
         // setting coordinates of all panels containing tables, buttons, and labels
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.gridx = 0;
@@ -151,6 +203,7 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         gbc.insets = new Insets(3, 3, 3, 3);
 
         JPanel arrFlightButtons = new JPanel(new GridBagLayout());
+        arrFlightButtons.setBackground(Color.black);
         arrAddButton = new JButton("Add Arriving Flight");
         arrAddButton.addActionListener(this);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -177,7 +230,14 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         gbc.gridy = 1;
         add(arrFlightButtons, gbc);
 
+        setButtonForegrndAndBckgrndClr(arrCancelButton, airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(arrAddButton, airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(arrRemoveButton, airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(arrUpdateButton, airportYellow, Color.black);
+
+
         JPanel depFlightButtons = new JPanel(new GridBagLayout());
+        depFlightButtons.setBackground(Color.black);
         depAddButton = new JButton("Add Departing Flight");
         depAddButton.addActionListener(this);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -202,8 +262,13 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         gbc.gridx = 1;
         gbc.gridy = 3;
         add(depFlightButtons, gbc);
+        setButtonForegrndAndBckgrndClr(depCancelButton,  airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(depAddButton,  airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(depRemoveButton,  airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(depUpdateButton,  airportYellow, Color.black);
 
         JPanel emergencyAlertButtons = new JPanel(new GridBagLayout());
+        emergencyAlertButtons.setBackground(Color.black);
         alertAddButton = new JButton("Add Alert");
         alertAddButton.addActionListener(this);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -229,23 +294,15 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         gbc.gridx = 1;
         gbc.gridy = 5;
         add(emergencyAlertButtons, gbc);
-//        gbc.fill = GridBagConstraints.NONE;
-//        JPanel persistencePanel = new JPanel();
-//
-//        JButton saveButton = new JButton("Save to File");
-//        gbc.gridx = 0;
-//        gbc.gridy = 6;
-//        gbc.anchor = GridBagConstraints.PAGE_END;
-//        persistencePanel.add(saveButton, gbc);
-//
-//        JButton loadButton = new JButton("Load from File");
-//        gbc.gridx = 1;
-//        gbc.gridy = 6;
-//        persistencePanel.add(loadButton, gbc);
-//
-//        gbc.gridx = 1;
-//        gbc.gridy = 6;
-//        add(persistencePanel, gbc);
+        setButtonForegrndAndBckgrndClr(alertAddButton,  airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(alertRemoveButton,  airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(saveButton,  airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(loadButton,  airportYellow, Color.black);
+    }
+
+    public void setButtonForegrndAndBckgrndClr(JButton button, Color bkgnd, Color frgnd) {
+        button.setBackground(bkgnd);
+        button.setForeground(frgnd);
     }
 
     public Object[][] flightTableCreator() {

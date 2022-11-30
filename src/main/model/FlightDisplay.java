@@ -66,6 +66,7 @@ public class    FlightDisplay implements Writable {
     public void removeEmergencyAlert(int alertID) {
         emergencyAlerts.removeIf(emgAlert -> alertID == emgAlert.getId());
     }
+
     // REQUIRES: a flight already in the list
     // MODIFIES: this
     // EFFECTS: removes an arriving flight from the List arrivingFlights
