@@ -395,6 +395,15 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
             String flightNumberToRemove = JOptionPane.showInputDialog("Please Input row number of flight to remove");
 
             if (!flightNumberToRemove.equals("")) {
+                int idOfArrFlightToRemove = Integer.parseInt(modelTable.getValueAt(
+                        Integer.parseInt(flightNumberToRemove) - 1, 1).toString());
+                ArrivingFlight arrFlightToRemove = null;
+                for (ArrivingFlight arrFlight : fd.getArrivingFlights()) {
+                    if (arrFlight.getFlightNumber() == idOfArrFlightToRemove) {
+                        arrFlightToRemove = arrFlight;
+                    }
+                }
+                fd.removeArrivingFlight(arrFlightToRemove);
                 modelTable.removeRow(Integer.parseInt(flightNumberToRemove) - 1);
             } else {
                 JOptionPane.showMessageDialog(this, "Please click on the 'Remove Arriving Flight' "
@@ -413,6 +422,15 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
             String flightNumberToRemove = JOptionPane.showInputDialog("Please Input row number of flight to remove");
 
             if (!flightNumberToRemove.equals("")) {
+                int idOfDepFlightToRemove = Integer.parseInt(modelTable1.getValueAt(
+                        Integer.parseInt(flightNumberToRemove) - 1, 1).toString());
+                DepartingFlight depFlightToRemove = null;
+                for (DepartingFlight depFlight : fd.getDepartingFlights()) {
+                    if (depFlight.getFlightNumber() == idOfDepFlightToRemove) {
+                        depFlightToRemove = depFlight;
+                    }
+                }
+                fd.removeDepartingFlight(depFlightToRemove);
                 modelTable1.removeRow(Integer.parseInt(flightNumberToRemove) - 1);
             } else {
                 JOptionPane.showMessageDialog(this, "Please click on the 'Remove Arriving Flight' "
@@ -436,7 +454,6 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
 
             String rowOfAlertToRemove = JOptionPane.showInputDialog("Please Input row number of alert to remove");
 
-            DepartingFlight depFlightToAdd;
             if (!rowOfAlertToRemove.equals("")) {
                 int idOfAlertToRemove = Integer.parseInt(modelTable2.getValueAt(
                         Integer.parseInt(rowOfAlertToRemove) - 1, 0).toString());
