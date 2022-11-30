@@ -46,22 +46,6 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
 
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     public static void main(String[] args) {
-//        JWindow window = new JWindow();
-//        window.getContentPane().add(
-//                new JLabel("", new ImageIcon("flightDisplayGIF.gif"), SwingConstants.CENTER));
-//        window.setBounds(500, 150, 480, 270);
-//        window.setVisible(true);
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        window.setVisible(false);
-//        JFrame newframe = new JFrame();
-//        newframe.add(new JLabel("Welcome"));
-//        newframe.setVisible(true);
-//        newframe.setSize(300,100);
-//        window.dispose();
         SplashJava splash = new SplashJava();
         try {
             // Make JWindow appear for 10 seconds before disappear
@@ -107,7 +91,6 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         table = new JTable(new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                //all cells false
                 return false;
             }
         });
@@ -130,7 +113,6 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                //all cells false
                 return false;
             }
         });
@@ -153,7 +135,6 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                //all cells false
                 return false;
             }
         });
@@ -207,7 +188,6 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         arrAddButton = new JButton("Add Arriving Flight");
         arrAddButton.addActionListener(this);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        //gbc.ipady = 40;  //make this component tall
         gbc.gridx = 2;
         gbc.gridy = 1;
         arrFlightButtons.add(arrAddButton, gbc);
@@ -284,7 +264,6 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         saveButton.addActionListener(this);
         gbc.gridx = 0;
         gbc.gridy = 6;
-        //gbc.anchor = GridBagConstraints.PAGE_END;
         emergencyAlertButtons.add(saveButton, gbc);
         JButton loadButton = new JButton("Load from File");
         loadButton.addActionListener(this);
@@ -468,10 +447,6 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
                         + "button again and enter flight data in all fields");
             }
         } else if (e.getActionCommand().equals("Save to File")) {
-//            JOptionPane.showMessageDialog(this, "Please click on the 'Remove Alert' "
-//                    + "button again and enter flight data in all fields");
-//            String rowOfFlightToUpdate = JOptionPane.showInputDialog("Please Input row number of the flight"
-//                    + " you wish to update");
             try {
                 jsonWriter.open();
                 jsonWriter.write(fd);

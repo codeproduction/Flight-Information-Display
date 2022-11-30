@@ -1,6 +1,6 @@
 package ui;
 
-public class Main {
+public class FlightDisplayConsoleApp {
     public static void main(String[] args) {
         new FlightDisplayApp();
     }
