@@ -37,6 +37,7 @@ public class    FlightDisplay implements Writable {
 
     public void addEmergencyAlert(Alert alert) {
         emergencyAlerts.add(alert);
+        EventLog.getInstance().logEvent(new Event("Emergency Alert added."));
     }
 
     // REQUIRES: a flight not already in the list
@@ -44,6 +45,7 @@ public class    FlightDisplay implements Writable {
     // EFFECTS: adds an arriving flight to the list
     public void addArrivingFlight(ArrivingFlight flight) {
         arrivingFlights.add(flight);
+        EventLog.getInstance().logEvent(new Event("Arriving Flight added."));
     }
 
     // REQUIRES: a flight not already in the list
@@ -51,6 +53,7 @@ public class    FlightDisplay implements Writable {
     // EFFECTS: adds a departing flight to the departingFlights
     public void addDepartingFlight(DepartingFlight flight) {
         departingFlights.add(flight);
+        EventLog.getInstance().logEvent(new Event("Departing Flight added."));
     }
 
     // REQUIRES: alert and its ID must already be contained in the emergencyAlerts list
@@ -58,6 +61,7 @@ public class    FlightDisplay implements Writable {
     // EFFECTS: Removes specified alert from List<Alert> emergencyAlerts
     public void removeEmergencyAlert(Alert alert) {
         emergencyAlerts.remove(alert);
+        EventLog.getInstance().logEvent(new Event("Emergency Alert removed."));
     }
 
     // REQUIRES: ID and alert associated with it must already be contained in the emergencyAlerts list
@@ -65,6 +69,7 @@ public class    FlightDisplay implements Writable {
     // EFFECTS: Removes specified alert from List<Alert> emergencyAlerts
     public void removeEmergencyAlert(int alertID) {
         emergencyAlerts.removeIf(emgAlert -> alertID == emgAlert.getId());
+        EventLog.getInstance().logEvent(new Event("Emergency Alert removed."));
     }
 
     // REQUIRES: a flight already in the list
@@ -72,6 +77,7 @@ public class    FlightDisplay implements Writable {
     // EFFECTS: removes an arriving flight from the List arrivingFlights
     public void removeArrivingFlight(ArrivingFlight flight) {
         arrivingFlights.remove(flight);
+        EventLog.getInstance().logEvent(new Event("Arriving Flight removed."));
     }
 
     // REQUIRES: a flight already in the list
@@ -79,6 +85,7 @@ public class    FlightDisplay implements Writable {
     // EFFECTS: removes a departing flight from List departingFlight
     public void removeDepartingFlight(DepartingFlight flight) {
         departingFlights.remove(flight);
+        EventLog.getInstance().logEvent(new Event("Departing Flight removed"));
     }
 
     @Override

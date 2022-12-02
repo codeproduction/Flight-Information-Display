@@ -1,6 +1,7 @@
 package ui;
 
 import model.*;
+import model.Event;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -59,13 +60,28 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         JFrame frame = new JFrame();
         frame.setSize(new Dimension(904, 642));
         frame.setTitle("YVR Flight Information Display");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setVisible(true);
         frame.setResizable(false);
         ImageIcon frameIcon = new ImageIcon("src/main/ui/FIDS_Icon.png");
         frame.setIconImage(frameIcon.getImage());
         frame.add(m);
         frame.pack();
+
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                for (Event e : EventLog.getInstance()) {
+                    System.out.println(e.toString());
+                }
+                //THEN you can exit the program
+                System.exit(0);
+                EventLog.getInstance().clear();
+            }
+        });
+
+
     }
 
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
@@ -314,7 +330,7 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
             String scheduledArrivalTime = JOptionPane.showInputDialog("Please Input scheduledArrivalTime");
             String estimatedArrivalTime = JOptionPane.showInputDialog("Please Input estimatedArrivalTime");
 
-            ArrivingFlight arrFlightToAdd = null;
+            ArrivingFlight arrFlightToAdd;
             if (!airline.equals("") && !flightNumber.equals("") && !origin.equals("") && !status.equals("")
                     && !scheduledArrivalTime.equals("") && !estimatedArrivalTime.equals("")) {
                 arrFlightToAdd = new ArrivingFlight(airline, Integer.parseInt(flightNumber), origin, status,
@@ -337,7 +353,7 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
             String scheduledArrivalTime = JOptionPane.showInputDialog("Please Input scheduledDepartureTime");
             String estimatedArrivalTime = JOptionPane.showInputDialog("Please Input estimatedDepartureTime");
 
-            DepartingFlight depFlightToAdd = null;
+            DepartingFlight depFlightToAdd;
             if (!airline.equals("") && !flightNumber.equals("") && !destination.equals("") && !status.equals("")
                     && !scheduledArrivalTime.equals("") && !estimatedArrivalTime.equals("")) {
                 depFlightToAdd = new DepartingFlight(airline, Integer.parseInt(flightNumber), destination, status,
