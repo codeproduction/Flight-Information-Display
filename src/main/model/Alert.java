@@ -2,7 +2,9 @@ package model;
 
 import org.json.JSONObject;
 
-// Alert is (int index, String alert) and a data type for representing alerts with associated methods
+/**
+ * Alert is (int index, String alert) – a data type for representing emergency alerts with associated methods
+ */
 public class Alert implements Writable {
     private static int nextAlertId = 1;
     private int id;

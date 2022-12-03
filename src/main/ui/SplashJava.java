@@ -3,6 +3,10 @@ package ui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Inspiration for code here taken from demo Java projects from Java docs published by Oracle
+ * This class runs the splash screen at the beginning of the GUI program.
+ */
 public class SplashJava extends JWindow {
     Image splashScreen;
     ImageIcon imageIcon;

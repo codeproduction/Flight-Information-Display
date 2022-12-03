@@ -20,6 +20,9 @@ import java.util.List;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
+/**
+ * This class provides the Graphical User Interface for the FlightDisplayApp
+ */
 public class FlightDisplayGUI extends JPanel implements ActionListener {
 
     private static final String JSON_STORE = "./data/workroom.json";

@@ -6,8 +6,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
+/**
+ * Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
  */
 
 // Represents a flight information display

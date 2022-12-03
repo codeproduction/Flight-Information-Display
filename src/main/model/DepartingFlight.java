@@ -2,8 +2,11 @@ package model;
 
 import org.json.JSONObject;
 
-// Represents a departing flight having an airline, flight number, origin, scheduled Departing time &
-// estimated Departing time
+/**
+ *  Represents a departing flight having an airline, flight number, origin, scheduled Departing time &
+ *  estimated Departing time
+ */
+
 public class DepartingFlight implements Flight, Writable {
     private String airline;
     private int flightNumber;

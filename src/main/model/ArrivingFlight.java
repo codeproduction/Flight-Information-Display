@@ -2,8 +2,10 @@ package model;
 
 import org.json.JSONObject;
 
-// Represents an arriving flight having an airline, flight number, origin, scheduled arrival time &
-// estimated arrival time
+/**
+ * Represents an arriving flight having an airline, flight number, origin, scheduled arrival time &
+ * estimated arrival time
+ */
 public class ArrivingFlight implements Flight, Writable {
     private String airline;
     private int flightNumber;

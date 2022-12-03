@@ -14,10 +14,9 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 /**
-Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
+ * Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
+ * Represents a reader that reads a flight display from JSON data stored in file
  */
-
-// Represents a reader that reads a flight display from JSON data stored in file
 public class JsonReader {
     private String source;
 

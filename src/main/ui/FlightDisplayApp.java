@@ -12,10 +12,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
-// Console-driven Flight Information Display application which represents a Flight Information Display
+/**
+ *  Console-driven Flight Information Display application which represents a Flight Information Display
+ */
+
 public class FlightDisplayApp {
-    /* todo later...: summary statistics (if complex features incorporated) */
-    // JSON fields (added after starting phase 2)
+
     private static final String JSON_STORE = "./data/workroom.json";
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
