@@ -1,7 +1,6 @@
 package model;
 
 import org.json.JSONObject;
-import persistence.Writable;
 
 // Alert is (int index, String alert) and a data type for representing alerts with associated methods
 public class Alert implements Writable {

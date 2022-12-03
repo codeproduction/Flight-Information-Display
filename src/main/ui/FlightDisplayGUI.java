@@ -22,6 +22,12 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 public class FlightDisplayGUI extends JPanel implements ActionListener {
 
+    private static final String JSON_STORE = "./data/workroom.json";
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
+    FlightDisplay fd;
+    Color airportYellow = new Color(255,233,0);
+
     JButton arrAddButton;
     JButton arrUpdateButton;
     JButton arrCancelButton;
@@ -38,18 +44,12 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
     DefaultTableModel modelTable1;
     JTable table2;
     DefaultTableModel modelTable2;
-    FlightDisplay fd;
-    private static final String JSON_STORE = "./data/workroom.json";
-    private JsonWriter jsonWriter;
-    private JsonReader jsonReader;
     GridBagConstraints gbc = new GridBagConstraints();
-    Color airportYellow = new Color(255,233,0);
 
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     public static void main(String[] args) {
         SplashJava splash = new SplashJava();
         try {
-            // Make JWindow appear for 10 seconds before disappear
             Thread.sleep(1000);
             splash.dispose();
         } catch (Exception e) {

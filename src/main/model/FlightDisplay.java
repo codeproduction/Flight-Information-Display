@@ -2,7 +2,6 @@ package model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import persistence.Writable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,7 @@ Inspiration for code here taken from Json Demo provided to CPSC 210 students on 
  */
 
 // Represents a flight information display
-public class    FlightDisplay implements Writable {
+public class FlightDisplay implements Writable {
     protected List<ArrivingFlight> arrivingFlights;
     protected List<DepartingFlight> departingFlights;
     protected List<Alert> emergencyAlerts;

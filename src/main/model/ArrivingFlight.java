@@ -1,7 +1,6 @@
 package model;
 
 import org.json.JSONObject;
-import persistence.Writable;
 
 // Represents an arriving flight having an airline, flight number, origin, scheduled arrival time &
 // estimated arrival time

@@ -35,7 +35,7 @@
 - As a user, I want to be able to load a saved state of the flight information display from the last time it was run 
   from file and resume exactly from where left off.
 
-  ## Phase 4 : Task 2
+## Phase 4 : Task 2
 
 Below is a representative sample of the EventLog when the Flight Information Display is closed:
 ```java
@@ -65,4 +65,10 @@ Thu Dec 01 13:34:58 PST 2022 Departing Flight removed
 
 Thu Dec 01 13:35:02 PST 2022 Emergency Alert removed.
 ```
+
+## Phase 4 : Task 3
+
+If I had more time, I would da fair amount of refactoring especially extracting methods becuause they are taking too
+much space. As far as the classes are concerned, I am satisfied and nothing much comes to my mind for refactoring. I
+could have made Flight an abstract class, but chose to go with an interface.
 

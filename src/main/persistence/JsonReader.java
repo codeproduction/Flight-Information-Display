@@ -13,9 +13,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-/*
+/**
 Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
  */
+
 // Represents a reader that reads a flight display from JSON data stored in file
 public class JsonReader {
     private String source;
@@ -38,7 +39,7 @@ public class JsonReader {
         StringBuilder contentBuilder = new StringBuilder();
 
         try (Stream<String> stream = Files.lines(Paths.get(source), StandardCharsets.UTF_8)) {
-            stream.forEach(s -> contentBuilder.append(s));
+            stream.forEach(contentBuilder::append);
         }
 
         return contentBuilder.toString();
@@ -54,11 +55,6 @@ public class JsonReader {
     // MODIFIES: wr
     // EFFECTS: parses thingies from JSON object and adds them to workroom
     private void addThingies(FlightDisplay fd, JSONObject jsonObject) {
-//        JSONArray jsonArray = jsonObject.getJSONArray("thingies");
-//        for (Object json : jsonArray) {
-//            JSONObject nextThingy = (JSONObject) json;
-//            addThingy(wr, nextThingy);
-//        }
         JSONArray arrFlightsJsonArray = jsonObject.getJSONArray("Arriving Flights");
         for (Object json : arrFlightsJsonArray) {
             JSONObject nextThingy = (JSONObject) json;
@@ -75,15 +71,6 @@ public class JsonReader {
             addAlert(fd, nextThingy);
         }
     }
-
-//    // MODIFIES: wr
-//    // EFFECTS: parses thingy from JSON object and adds it to workroom
-//    private void addThingy(WorkRoom wr, JSONObject jsonObject) {
-//        String name = jsonObject.getString("name");
-//        Category category = Category.valueOf(jsonObject.getString("category"));
-//        Thingy thingy = new Thingy(name, category);
-//        wr.addThingy(thingy);
-//    }
 
     // MODIFIES: fd
     // EFFECTS: parses arrFlight from JSON object and adds it to workroom

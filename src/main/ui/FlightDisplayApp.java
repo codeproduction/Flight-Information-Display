@@ -20,10 +20,6 @@ public class FlightDisplayApp {
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
     private FlightDisplay flightDisplay;
-    // old fields
-//    protected List<ArrivingFlight> arrivingFlights;
-//    protected List<DepartingFlight> departingFlights;
-//    private List<Alert> emergencyAlerts;
     private Scanner input;
 
     // EFFECTS: calls runFlightDisplay which initiates the application
@@ -39,7 +35,7 @@ public class FlightDisplayApp {
      *                  printFlightDisplay and executeUserCommand method
      *                  [generally runFlightMethod()] were inspired by similar methods
      *                  found in the Teller application provided as example on the edX
-     *                  course page
+     *                  course page.
      *                  Also, the separation of FlightDisplay and FlightDisplayApp was taken from Json Demo provided to
      *                  students of CPSC 210.
      */
@@ -49,11 +45,6 @@ public class FlightDisplayApp {
     //          Initializes setup for application to run and displays menu
     //          Prints FlightDisplay after each option in menu
     private void runFlightDisplay() {
-        /*
-         * 1. Initialize setup
-         * 2. Present options to user: ---- METHOD displayOptions()
-         * 3. Display/Print FlightDisplay after user chooses an option other than quitting
-         */
         boolean isDisplayNeeded = true;
         String option;
         initializeSetup();
@@ -105,30 +96,43 @@ public class FlightDisplayApp {
 
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     private void executeUserCommand(String action) {
-        if (action.equals("a")) {
-            addArrivingFlight();
-        } else if (action.equals("b")) {
-            updateArrivingFlight();
-        } else if (action.equals("c")) {
-            cancelArrivingFlight();
-        } else if (action.equals("d")) {
-            removeArrivingFlight();
-        } else if (action.equals("e")) {
-            addDepartingFlight();
-        } else if (action.equals("f")) {
-            updateDepartingFlight();
-        } else if (action.equals("g")) {
-            cancelDepartingFlight();
-        } else if (action.equals("h")) {
-            removeDepartingFlight();
-        } else if (action.equals("i")) {
-            addEmergencyAlert();
-        } else if (action.equals("j")) {
-            removeEmergencyAlert();
-        } else if (action.equals("l")) {
-            saveFlightDisplay();
-        } else if (action.equals("m")) {
-            loadFlightDisplay();
+        switch (action) {
+            case "a":
+                addArrivingFlight();
+                break;
+            case "b":
+                updateArrivingFlight();
+                break;
+            case "c":
+                cancelArrivingFlight();
+                break;
+            case "d":
+                removeArrivingFlight();
+                break;
+            case "e":
+                addDepartingFlight();
+                break;
+            case "f":
+                updateDepartingFlight();
+                break;
+            case "g":
+                cancelDepartingFlight();
+                break;
+            case "h":
+                removeDepartingFlight();
+                break;
+            case "i":
+                addEmergencyAlert();
+                break;
+            case "j":
+                removeEmergencyAlert();
+                break;
+            case "l":
+                saveFlightDisplay();
+                break;
+            case "m":
+                loadFlightDisplay();
+                break;
         }
     }
 
@@ -136,10 +140,10 @@ public class FlightDisplayApp {
     // EFFECTS: Prints FlightDisplay
     private void printFlightDisplay() {
         System.out.println("ARRIVALS: (Airline, Flight Number, Origin, Status, Scheduled Arrival Time, "
-                            + "Estimated Arrival Time)");
+                + "Estimated Arrival Time)");
         printAllArrivingFlights();
         System.out.println("DEPARTURES: (Airline, Flight Number, Destination, Status, Scheduled Departure Time, "
-                            + "Estimated Departure Time)");
+                + "Estimated Departure Time)");
         printAllDepartingFlights();
         System.out.println("EMERGENCY ALERTS: ");
         printAllEmergencyAlerts();
@@ -226,7 +230,7 @@ public class FlightDisplayApp {
         System.out.println("Please enter estimated arrival time");
         String estimatedTime = input.next();
         ArrivingFlight newFlight = new ArrivingFlight(airline, flightNumber, origin, status, scheduledTime,
-                                       estimatedTime);
+                estimatedTime);
         flightDisplay.addArrivingFlight(newFlight);
         System.out.println("You added: (" + printArrivingFlight(newFlight) + ")");
     }
@@ -313,7 +317,7 @@ public class FlightDisplayApp {
         System.out.println("Please enter estimated departure time");
         String estimatedTime = input.next();
         DepartingFlight newFlight = new DepartingFlight(airline, flightNumber, destination, status, scheduledTime,
-                                                        estimatedTime);
+                estimatedTime);
         flightDisplay.addDepartingFlight(newFlight);
         System.out.println("You added: (" + printDepartingFlight(newFlight) + ")");
     }

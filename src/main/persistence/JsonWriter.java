@@ -13,8 +13,8 @@ public class JsonWriter {
     private PrintWriter writer;
     private String destination;
 
-    /*
-    Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
+    /**
+     * Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
      */
     // EFFECTS: constructs writer to write to destination file
     public JsonWriter(String destination) {
