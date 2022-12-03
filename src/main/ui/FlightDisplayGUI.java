@@ -29,7 +29,7 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
     FlightDisplay fd;
-    Color airportYellow = new Color(255,233,0);
+    Color airportYellow = new Color(255, 233, 0);
 
     JButton arrAddButton;
     JButton arrUpdateButton;
@@ -87,6 +87,9 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
 
     }
 
+    /*
+     * EFFECTS: Creates the instance of the Graphical User Interface for the FlightDisplay
+     */
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     public FlightDisplayGUI() {
         fd = new FlightDisplay();
@@ -261,10 +264,10 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         gbc.gridx = 1;
         gbc.gridy = 3;
         add(depFlightButtons, gbc);
-        setButtonForegrndAndBckgrndClr(depCancelButton,  airportYellow, Color.black);
-        setButtonForegrndAndBckgrndClr(depAddButton,  airportYellow, Color.black);
-        setButtonForegrndAndBckgrndClr(depRemoveButton,  airportYellow, Color.black);
-        setButtonForegrndAndBckgrndClr(depUpdateButton,  airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(depCancelButton, airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(depAddButton, airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(depRemoveButton, airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(depUpdateButton, airportYellow, Color.black);
 
         JPanel emergencyAlertButtons = new JPanel(new GridBagLayout());
         emergencyAlertButtons.setBackground(Color.black);
@@ -292,22 +295,29 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
         gbc.gridx = 1;
         gbc.gridy = 5;
         add(emergencyAlertButtons, gbc);
-        setButtonForegrndAndBckgrndClr(alertAddButton,  airportYellow, Color.black);
-        setButtonForegrndAndBckgrndClr(alertRemoveButton,  airportYellow, Color.black);
-        setButtonForegrndAndBckgrndClr(saveButton,  airportYellow, Color.black);
-        setButtonForegrndAndBckgrndClr(loadButton,  airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(alertAddButton, airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(alertRemoveButton, airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(saveButton, airportYellow, Color.black);
+        setButtonForegrndAndBckgrndClr(loadButton, airportYellow, Color.black);
     }
 
+    /*
+     * REQUIRES: button for which color is being changed,
+     * color for foreground, and color for background
+     * MODIFIES: this
+     * EFFECTS: sets background and foreground of button passed as argument
+     */
     public void setButtonForegrndAndBckgrndClr(JButton button, Color bkgnd, Color frgnd) {
         button.setBackground(bkgnd);
         button.setForeground(frgnd);
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: creates 2 dimensional array for the tables for the display
+     *  (Arriving, Departing, and Emergency Alerts)
+     */
     public Object[][] flightTableCreator() {
-
-        ArrivingFlight flight = new ArrivingFlight("adk", 333, "data", "sjdf",
-                "dkfja", "dksfj");
-
         List<ArrivingFlight> flightList = fd.getArrivingFlights();
 
         Object[][] toBeReturned = new Object[flightList.size()][];
@@ -321,6 +331,9 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
     }
 
 
+    /*
+     * EFFECTS: checks for button clicks and performs action accordingly
+     */
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -515,7 +528,7 @@ public class FlightDisplayGUI extends JPanel implements ActionListener {
                 }
 
                 for (Alert emgAlert : fd.getEmergencyAlerts()) {
-                    modelTable2.addRow(new Object[]{emgAlert.getId(),emgAlert.getAlert()});
+                    modelTable2.addRow(new Object[]{emgAlert.getId(), emgAlert.getAlert()});
                 }
 
                 System.out.println("Loaded Flight Information Display from " + JSON_STORE);

@@ -29,7 +29,7 @@ public class SplashJava extends JWindow {
         setVisible(true);
     }
 
-    // Paint image onto JWindow
+    // EFFECTS: Paint image onto JWindow
     public void paint(Graphics g) {
         super.paint(g);
         g.drawImage(splashScreen, 0, 0, this);
