@@ -1,0 +1,48 @@
+{
+    "Arriving Flights": [
+        {
+            "Flight Number": 232,
+            "Origin": "Karachi",
+            "Status": "On time",
+            "Airline": "PIA",
+            "Scheduled Arrival Time": "11:33",
+            "Estimated Arrival Time": "11:22"
+        },
+        {
+            "Flight Number": 213,
+            "Origin": "Amsterdam",
+            "Status": "Delayed",
+            "Airline": "KLM",
+            "Scheduled Arrival Time": "22:22",
+            "Estimated Arrival Time": "23:44"
+        }
+    ],
+    "Emergency Alerts": [
+        {
+            "Alert": "Black Wallet found at Local Farm Fried Chicken",
+            "ID": 1
+        },
+        {
+            "Alert": "Brown trench coat found at Burger Labs in Terminal 3",
+            "ID": 2
+        }
+    ],
+    "Departing Flights": [
+        {
+            "Flight Number": 333,
+            "Status": "On time",
+            "Destination": "Dubai",
+            "Estimated Departure Time": "22:23",
+            "Airline": "Air Canada",
+            "Scheduled Departure Time": "22:22"
+        },
+        {
+            "Flight Number": 115,
+            "Status": "Delayed",
+            "Destination": "Hong Kong",
+            "Estimated Departure Time": "12:55",
+            "Airline": "Cathay Pacific",
+            "Scheduled Departure Time": "11:33"
+        }
+    ]
+}

@@ -1,0 +1,787 @@
+Index: src/test/model/JsonReaderTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\r\n\r\nimport org.junit.jupiter.api.Test;\r\nimport persistence.JsonReader;\r\n\r\nimport java.io.IOException;\r\nimport java.util.List;\r\n\r\nimport static org.junit.jupiter.api.Assertions.*;\r\n\r\n/*\r\nInspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course\r\n */\r\n\r\npublic class JsonReaderTest extends JsonTest {\r\n\r\n    @Test\r\n    void testReaderNonExistentFile() {\r\n        JsonReader reader = new JsonReader(\"./data/noSuchFile.json\");\r\n        try {\r\n            FlightDisplay fd = reader.read();\r\n            fail(\"IOException expected\");\r\n        } catch (IOException e) {\r\n            // pass\r\n        }\r\n    }\r\n\r\n    @Test\r\n    void testReaderEmptyFlightDisplay() {\r\n        JsonReader reader = new JsonReader(\"./data/testReaderEmptyWorkRoom.json\");\r\n        try {\r\n            FlightDisplay fd = reader.read();\r\n            assertTrue(fd.arrivingFlights.isEmpty());\r\n            assertTrue(fd.departingFlights.isEmpty());\r\n            assertTrue(fd.emergencyAlerts.isEmpty());\r\n        } catch (IOException e) {\r\n            fail(\"Couldn't read from file\");\r\n        }\r\n    }\r\n\r\n    @Test\r\n    void testReaderGeneralFlightDisplay() {\r\n        JsonReader reader = new JsonReader(\"./data/testReaderGeneralWorkRoom.json\");\r\n        try {\r\n            FlightDisplay fd = reader.read();\r\n            List<ArrivingFlight> arrFlights = fd.getArrivingFlights();\r\n            List<DepartingFlight> depFlights = fd.getDepartingFlights();\r\n            List<Alert> alertsList = fd.getEmergencyAlerts();\r\n            assertEquals(1, arrFlights.size());\r\n            assertEquals(1, depFlights.size());\r\n            assertEquals(1, alertsList.size());\r\n            checkArrFlight(\"PIA\", 111, arrFlights.get(0));\r\n            checkDepFlight(\"PIA\", 112, depFlights.get(0));\r\n            checkAlert(\"Alert xyz\", alertsList.get(0));\r\n            //checkThingy(\"saw\", Category.WOODWORK, thingies.get(1));\r\n        } catch (IOException e) {\r\n            fail(\"Couldn't read from file\");\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/model/JsonReaderTest.java b/src/test/model/JsonReaderTest.java
+--- a/src/test/model/JsonReaderTest.java	(revision 1ed666b89505788d474c05908b1f58f3a1f8619d)
++++ b/src/test/model/JsonReaderTest.java	(date 1674330296648)
+@@ -8,9 +8,6 @@
+ 
+ import static org.junit.jupiter.api.Assertions.*;
+ 
+-/*
+-Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
+- */
+ 
+ public class JsonReaderTest extends JsonTest {
+ 
+Index: src/test/model/JsonWriterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\r\n\r\nimport org.junit.jupiter.api.Test;\r\nimport persistence.JsonReader;\r\nimport persistence.JsonWriter;\r\n\r\nimport java.io.IOException;\r\nimport java.util.List;\r\n\r\nimport static org.junit.jupiter.api.Assertions.assertEquals;\r\nimport static org.junit.jupiter.api.Assertions.fail;\r\n\r\n/*\r\nInspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course\r\n */\r\n\r\npublic class JsonWriterTest extends JsonTest{\r\n    @Test\r\n    void testWriterInvalidFile() {\r\n        try {\r\n            FlightDisplay wr = new FlightDisplay();\r\n            JsonWriter writer = new JsonWriter(\"./data/my\\0illegal:fileName.json\");\r\n            writer.open();\r\n            fail(\"IOException was expected\");\r\n        } catch (IOException e) {\r\n            // pass\r\n        }\r\n    }\r\n\r\n    @Test\r\n    void testWriterEmptyWorkroom() {\r\n        try {\r\n            FlightDisplay fd = new FlightDisplay();\r\n            JsonWriter writer = new JsonWriter(\"./data/testWriterEmptyWorkroom.json\");\r\n            writer.open();\r\n            writer.write(fd);\r\n            writer.close();\r\n\r\n            JsonReader reader = new JsonReader(\"./data/testWriterEmptyWorkroom.json\");\r\n            fd = reader.read();\r\n            assertEquals(0, fd.getArrivingFlights().size());\r\n            assertEquals(0, fd.getDepartingFlights().size());\r\n            assertEquals(0, fd.getEmergencyAlerts().size());\r\n\r\n        } catch (IOException e) {\r\n            fail(\"Exception should not have been thrown\");\r\n        }\r\n    }\r\n\r\n    @Test\r\n    void testWriterGeneralWorkroom() {\r\n        try {\r\n            FlightDisplay fd = new FlightDisplay();\r\n            fd.addArrivingFlight(new ArrivingFlight(\"KLM\", 444,\r\n                    \"Doha\", \"Delayed\",\"11:22\", \"11:44\"));\r\n            fd.addDepartingFlight(new DepartingFlight(\"KLM\",444,\r\n                    \"Doha\", \"Delayed\",\"11:22\", \"11:44\"));\r\n            fd.addEmergencyAlert(new Alert(\"Alert abc\"));\r\n            JsonWriter writer = new JsonWriter(\"./data/testWriterGeneralWorkroom.json\");\r\n            writer.open();\r\n            writer.write(fd);\r\n            writer.close();\r\n\r\n            JsonReader reader = new JsonReader(\"./data/testWriterGeneralWorkroom.json\");\r\n            fd = reader.read();\r\n            List<ArrivingFlight> arrFlights = fd.getArrivingFlights();\r\n            List<DepartingFlight> depFlights = fd.getDepartingFlights();\r\n            List<Alert> emergencyAlerts = fd.getEmergencyAlerts();\r\n            assertEquals(1, arrFlights.size());\r\n            assertEquals(1, depFlights.size());\r\n            assertEquals(1, emergencyAlerts.size());\r\n            checkArrFlight(\"KLM\", 444, arrFlights.get(0));\r\n            checkDepFlight(\"KLM\", 444, depFlights.get(0));\r\n            checkAlert(\"Alert abc\", emergencyAlerts.get(0));\r\n\r\n        } catch (IOException e) {\r\n            fail(\"Exception should not have been thrown\");\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/model/JsonWriterTest.java b/src/test/model/JsonWriterTest.java
+--- a/src/test/model/JsonWriterTest.java	(revision 1ed666b89505788d474c05908b1f58f3a1f8619d)
++++ b/src/test/model/JsonWriterTest.java	(date 1674330600415)
+@@ -10,10 +10,6 @@
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.fail;
+ 
+-/*
+-Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
+- */
+-
+ public class JsonWriterTest extends JsonTest{
+     @Test
+     void testWriterInvalidFile() {
+Index: src/test/model/JsonTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\r\n\r\nimport model.ArrivingFlight;\r\n\r\nimport static org.junit.jupiter.api.Assertions.assertEquals;\r\n\r\n/*\r\nInspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course\r\n */\r\n\r\npublic class JsonTest {\r\n    protected void checkArrFlight(String airline, int flightNumber, ArrivingFlight thingy) {\r\n        assertEquals(airline, thingy.getAirline());\r\n        assertEquals(flightNumber, thingy.getFlightNumber());\r\n    }\r\n\r\n    protected void checkDepFlight(String airline, int flightNumber, DepartingFlight thingy) {\r\n        assertEquals(airline, thingy.getAirline());\r\n        assertEquals(flightNumber, thingy.getFlightNumber());\r\n    }\r\n\r\n    protected void checkAlert(String alertString, Alert alert) {\r\n        assertEquals(alertString, alert.getAlert());\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/model/JsonTest.java b/src/test/model/JsonTest.java
+--- a/src/test/model/JsonTest.java	(revision 1ed666b89505788d474c05908b1f58f3a1f8619d)
++++ b/src/test/model/JsonTest.java	(date 1674330600431)
+@@ -4,9 +4,6 @@
+ 
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+ 
+-/*
+-Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
+- */
+ 
+ public class JsonTest {
+     protected void checkArrFlight(String airline, int flightNumber, ArrivingFlight thingy) {
+Index: src/main/model/FlightDisplay.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONObject;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\n/**\r\n * Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course\r\n */\r\n\r\n// Represents a flight information display\r\npublic class FlightDisplay implements Writable {\r\n    protected List<ArrivingFlight> arrivingFlights;\r\n    protected List<DepartingFlight> departingFlights;\r\n    protected List<Alert> emergencyAlerts;\r\n\r\n    public FlightDisplay() {\r\n        this.arrivingFlights = new ArrayList<>();\r\n        this.departingFlights = new ArrayList<>();\r\n        this.emergencyAlerts = new ArrayList<>();\r\n    }\r\n\r\n    public List<ArrivingFlight> getArrivingFlights() {\r\n        return arrivingFlights;\r\n    }\r\n\r\n    public List<DepartingFlight> getDepartingFlights() {\r\n        return departingFlights;\r\n    }\r\n\r\n    public List<Alert> getEmergencyAlerts() {\r\n        return emergencyAlerts;\r\n    }\r\n\r\n    public void addEmergencyAlert(Alert alert) {\r\n        emergencyAlerts.add(alert);\r\n        EventLog.getInstance().logEvent(new Event(\"Emergency Alert added.\"));\r\n    }\r\n\r\n    // REQUIRES: a flight not already in the list\r\n    // MODIFIES: this\r\n    // EFFECTS: adds an arriving flight to the list\r\n    public void addArrivingFlight(ArrivingFlight flight) {\r\n        arrivingFlights.add(flight);\r\n        EventLog.getInstance().logEvent(new Event(\"Arriving Flight added.\"));\r\n    }\r\n\r\n    // REQUIRES: a flight not already in the list\r\n    // MODIFIES: this\r\n    // EFFECTS: adds a departing flight to the departingFlights\r\n    public void addDepartingFlight(DepartingFlight flight) {\r\n        departingFlights.add(flight);\r\n        EventLog.getInstance().logEvent(new Event(\"Departing Flight added.\"));\r\n    }\r\n\r\n    // REQUIRES: alert and its ID must already be contained in the emergencyAlerts list\r\n    // MODIFIES: this and List<String> emergencyAlerts\r\n    // EFFECTS: Removes specified alert from List<Alert> emergencyAlerts\r\n    public void removeEmergencyAlert(Alert alert) {\r\n        emergencyAlerts.remove(alert);\r\n        EventLog.getInstance().logEvent(new Event(\"Emergency Alert removed.\"));\r\n    }\r\n\r\n    // REQUIRES: ID and alert associated with it must already be contained in the emergencyAlerts list\r\n    // MODIFIES: this and List<String> emergencyAlerts\r\n    // EFFECTS: Removes specified alert from List<Alert> emergencyAlerts\r\n    public void removeEmergencyAlert(int alertID) {\r\n        emergencyAlerts.removeIf(emgAlert -> alertID == emgAlert.getId());\r\n        EventLog.getInstance().logEvent(new Event(\"Emergency Alert removed.\"));\r\n    }\r\n\r\n    // REQUIRES: a flight already in the list\r\n    // MODIFIES: this\r\n    // EFFECTS: removes an arriving flight from the List arrivingFlights\r\n    public void removeArrivingFlight(ArrivingFlight flight) {\r\n        arrivingFlights.remove(flight);\r\n        EventLog.getInstance().logEvent(new Event(\"Arriving Flight removed.\"));\r\n    }\r\n\r\n    // REQUIRES: a flight already in the list\r\n    // MODIFIES: this\r\n    // EFFECTS: removes a departing flight from List departingFlight\r\n    public void removeDepartingFlight(DepartingFlight flight) {\r\n        departingFlights.remove(flight);\r\n        EventLog.getInstance().logEvent(new Event(\"Departing Flight removed\"));\r\n    }\r\n\r\n    @Override\r\n    public JSONObject toJson() {\r\n        JSONObject json = new JSONObject();\r\n        json.put(\"Arriving Flights\", arrivingFlightsToJson());\r\n        json.put(\"Departing Flights\", departingFlightsToJson());\r\n        json.put(\"Emergency Alerts\", emergencyAlertsToJson());\r\n        return json;\r\n    }\r\n\r\n    // EFFECTS: returns arrivingFlights in this workroom as a JSON array\r\n    private JSONArray arrivingFlightsToJson() {\r\n        JSONArray jsonArray = new JSONArray();\r\n        for (ArrivingFlight flight : arrivingFlights) {\r\n            jsonArray.put(flight.toJson());\r\n        }\r\n        return jsonArray;\r\n    }\r\n\r\n    // EFFECTS: returns departingFlights in this workroom as a JSON array\r\n    private JSONArray departingFlightsToJson() {\r\n        JSONArray jsonArray = new JSONArray();\r\n        for (DepartingFlight flight : departingFlights) {\r\n            jsonArray.put(flight.toJson());\r\n        }\r\n        return jsonArray;\r\n    }\r\n\r\n    // EFFECTS: returns emergencyAlerts in this workroom as a JSON array\r\n    private JSONArray emergencyAlertsToJson() {\r\n        JSONArray jsonArray = new JSONArray();\r\n        for (Alert alert : emergencyAlerts) {\r\n            jsonArray.put(alert.toJson());\r\n        }\r\n        return jsonArray;\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/model/FlightDisplay.java b/src/main/model/FlightDisplay.java
+--- a/src/main/model/FlightDisplay.java	(revision 1ed666b89505788d474c05908b1f58f3a1f8619d)
++++ b/src/main/model/FlightDisplay.java	(date 1674329839852)
+@@ -6,10 +6,6 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ 
+-/**
+- * Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
+- */
+-
+ // Represents a flight information display
+ public class FlightDisplay implements Writable {
+     protected List<ArrivingFlight> arrivingFlights;
+Index: src/main/ui/FlightDisplayApp.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ui;\r\n\r\nimport model.Alert;\r\nimport model.ArrivingFlight;\r\nimport model.DepartingFlight;\r\nimport model.FlightDisplay;\r\nimport persistence.JsonReader;\r\nimport persistence.JsonWriter;\r\n\r\nimport java.io.FileNotFoundException;\r\nimport java.io.IOException;\r\nimport java.util.List;\r\nimport java.util.Scanner;\r\n\r\n/**\r\n *  Console-driven Flight Information Display application which represents a Flight Information Display\r\n */\r\n\r\npublic class FlightDisplayApp {\r\n\r\n    private static final String JSON_STORE = \"./data/workroom.json\";\r\n    private JsonWriter jsonWriter;\r\n    private JsonReader jsonReader;\r\n    private FlightDisplay flightDisplay;\r\n    private Scanner input;\r\n\r\n    // EFFECTS: calls runFlightDisplay which initiates the application\r\n    public FlightDisplayApp() {\r\n        flightDisplay = new FlightDisplay();\r\n        jsonWriter = new JsonWriter(JSON_STORE);\r\n        jsonReader = new JsonReader(JSON_STORE);\r\n        runFlightDisplay();\r\n    }\r\n\r\n    /**\r\n     * NOTE TO GRADERS: The runFlightDisplay() method's while loop and initializeSetup,\r\n     *                  printFlightDisplay and executeUserCommand method\r\n     *                  [generally runFlightMethod()] were inspired by similar methods\r\n     *                  found in the Teller application provided as example on the edX\r\n     *                  course page.\r\n     *                  Also, the separation of FlightDisplay and FlightDisplayApp was taken from Json Demo provided to\r\n     *                  students of CPSC 210.\r\n     */\r\n    // MODIFIES: this\r\n    // EFFECTS: Runs the application which will set up the FlightDisplay utilizing input from user\r\n    //          Loop runs until user chooses to quit\r\n    //          Initializes setup for application to run and displays menu\r\n    //          Prints FlightDisplay after each option in menu\r\n    private void runFlightDisplay() {\r\n        boolean isDisplayNeeded = true;\r\n        String option;\r\n        initializeSetup();\r\n\r\n        while (isDisplayNeeded) {\r\n            displayOptionsMenu();\r\n            option = input.next();\r\n            option = option.toLowerCase();\r\n\r\n            if (option.equals(\"n\")) {\r\n                isDisplayNeeded = false;\r\n            } else {\r\n                executeUserCommand(option);\r\n                System.out.println(\"\\nLatest flight information and status:\\n\");\r\n                printFlightDisplay();\r\n            }\r\n        }\r\n    }\r\n\r\n    // MODIFIES: this and Fields of all Flight Lists and Alert lists\r\n    // EFFECTS: Initializes lists of Flights and emergency Alerts\r\n    private void initializeSetup() {\r\n        input = new Scanner(System.in);\r\n        input.useDelimiter(\"\\n\");\r\n    }\r\n\r\n    // EFFECTS: Displays actions user can perform\r\n    private void displayOptionsMenu() {\r\n        System.out.println(\"\\nChoose from the following actions:\");\r\n        System.out.println(\"\\ta => add arriving flight\");\r\n        System.out.println(\"\\tb => update estimated arrival time and status\");\r\n        System.out.println(\"\\tc => cancel arriving flight\");\r\n        System.out.println(\"\\td => remove arriving flight\");\r\n        System.out.println(\"\\te => add departing flight\");\r\n        System.out.println(\"\\tf => update estimated departure time and status\");\r\n        System.out.println(\"\\tg => cancel departing flight\");\r\n        System.out.println(\"\\th => remove departing flight\");\r\n        System.out.println(\"\\ti => add emergency alert\");\r\n        System.out.println(\"\\tj => remove emergency alert\");\r\n        System.out.println(\"\\tk => print all flights\");\r\n        System.out.println(\"\\tl => save flight display to file\");\r\n        System.out.println(\"\\tm => load flight display from file\");\r\n        System.out.println(\"\\tn => end program\");\r\n    }\r\n\r\n    // REQUIRES: Letter from a to k - can be both lower and upper casea\r\n    // MODIFIES: this\r\n    // EFFECTS: Processes user command and executes relevant process/method\r\n\r\n    @SuppressWarnings({\"checkstyle:MethodLength\", \"checkstyle:SuppressWarnings\"})\r\n    private void executeUserCommand(String action) {\r\n        switch (action) {\r\n            case \"a\":\r\n                addArrivingFlight();\r\n                break;\r\n            case \"b\":\r\n                updateArrivingFlight();\r\n                break;\r\n            case \"c\":\r\n                cancelArrivingFlight();\r\n                break;\r\n            case \"d\":\r\n                removeArrivingFlight();\r\n                break;\r\n            case \"e\":\r\n                addDepartingFlight();\r\n                break;\r\n            case \"f\":\r\n                updateDepartingFlight();\r\n                break;\r\n            case \"g\":\r\n                cancelDepartingFlight();\r\n                break;\r\n            case \"h\":\r\n                removeDepartingFlight();\r\n                break;\r\n            case \"i\":\r\n                addEmergencyAlert();\r\n                break;\r\n            case \"j\":\r\n                removeEmergencyAlert();\r\n                break;\r\n            case \"l\":\r\n                saveFlightDisplay();\r\n                break;\r\n            case \"m\":\r\n                loadFlightDisplay();\r\n                break;\r\n        }\r\n    }\r\n\r\n    // MODIFIES: this\r\n    // EFFECTS: Prints FlightDisplay\r\n    private void printFlightDisplay() {\r\n        System.out.println(\"ARRIVALS: (Airline, Flight Number, Origin, Status, Scheduled Arrival Time, \"\r\n                + \"Estimated Arrival Time)\");\r\n        printAllArrivingFlights();\r\n        System.out.println(\"DEPARTURES: (Airline, Flight Number, Destination, Status, Scheduled Departure Time, \"\r\n                + \"Estimated Departure Time)\");\r\n        printAllDepartingFlights();\r\n        System.out.println(\"EMERGENCY ALERTS: \");\r\n        printAllEmergencyAlerts();\r\n    }\r\n\r\n    // MODIFIES: this\r\n    // EFFECTS: Prints all Arriving Flights\r\n    private void printAllArrivingFlights() {\r\n        List<ArrivingFlight> arrivingFlights = flightDisplay.getArrivingFlights();\r\n        for (ArrivingFlight flight : arrivingFlights) {\r\n            System.out.println(printArrivingFlight(flight));\r\n        }\r\n    }\r\n\r\n    // MODIFIES: this\r\n    // EFFECTS: Prints all Departing Flights\r\n    private void printAllDepartingFlights() {\r\n        List<DepartingFlight> departingFlights = flightDisplay.getDepartingFlights();\r\n        for (DepartingFlight flight : departingFlights) {\r\n            System.out.println(printDepartingFlight(flight));\r\n        }\r\n    }\r\n\r\n    // MODIFIES: this\r\n    // EFFECTS: Prints all Alerts\r\n    private void printAllEmergencyAlerts() {\r\n        List<Alert> emergencyAlerts = flightDisplay.getEmergencyAlerts();\r\n        for (Alert alert : emergencyAlerts) {\r\n            printEmergencyAlert(alert);\r\n        }\r\n    }\r\n\r\n\r\n    // MODIFIES: this\r\n    // EFFECTS: Adds Alerts to List of Alerts\r\n    private void addEmergencyAlert() {\r\n        System.out.println(\"Please type the emergency alert you would like to display\");\r\n        String alertString = input.next();\r\n        Alert alert = new Alert(alertString);\r\n        flightDisplay.addEmergencyAlert(alert);\r\n        System.out.println(\"You added the following alert: (\" + alert.getAlert() + \")\");\r\n    }\r\n\r\n    // REQUIRES: alert and its ID must already be contained in the emergencyAlerts list\r\n    // MODIFIES: this and List<String> emergencyAlerts\r\n    // EFFECTS: Removes specified alert from List<Alert> emergencyAlerts\r\n    private void removeEmergencyAlert() {\r\n        System.out.println(\"Please type the id of the emergency alert you would like to remove\");\r\n        int alertId = input.nextInt();\r\n        Alert removeAlert = findAndReturnAlert(alertId);\r\n        flightDisplay.removeEmergencyAlert(removeAlert);\r\n        System.out.println(\"You removed the following alert: (\" + removeAlert.getAlert() + \")\");\r\n    }\r\n\r\n    // REQUIRES: alert ID must already be contained in the emergencyAlerts List\r\n    // MODIFIES: this\r\n    // EFFECTS: returns Alert with given alertId from List emergencyAlerts\r\n    private Alert findAndReturnAlert(int alertId) {\r\n        Alert requiredAlert = null;\r\n        List<Alert> emergencyAlerts = flightDisplay.getEmergencyAlerts();\r\n        for (Alert alert : emergencyAlerts) {\r\n            if (alert.getId() == alertId) {\r\n                requiredAlert = alert;\r\n            }\r\n        }\r\n        return requiredAlert;\r\n    }\r\n\r\n    // TODO maybe: could add check for this\r\n    // REQUIRES: a flight not already in the list\r\n    // MODIFIES: this\r\n    // EFFECTS: adds an arriving flight to the list\r\n    private void addArrivingFlight() {\r\n        System.out.println(\"Please enter airline\");\r\n        String airline = input.next().toUpperCase();\r\n        System.out.println(\"Please enter flight number\");\r\n        int flightNumber = input.nextInt();\r\n        System.out.println(\"Please enter origin\");\r\n        String origin = input.next();\r\n        System.out.println(\"Please input status\");\r\n        String status = input.next().toUpperCase();\r\n        System.out.println(\"Please enter scheduled arrival time\");\r\n        String scheduledTime = input.next();\r\n        System.out.println(\"Please enter estimated arrival time\");\r\n        String estimatedTime = input.next();\r\n        ArrivingFlight newFlight = new ArrivingFlight(airline, flightNumber, origin, status, scheduledTime,\r\n                estimatedTime);\r\n        flightDisplay.addArrivingFlight(newFlight);\r\n        System.out.println(\"You added: (\" + printArrivingFlight(newFlight) + \")\");\r\n    }\r\n\r\n    // REQUIRES: Flight input must already be in List ArrivingFlights\r\n    // MODIFIES: this\r\n    // EFFECTS: updates status and ETA of input flight according to user input\r\n    private void updateArrivingFlight() {\r\n        System.out.println(\"Please enter flight number of flight you would like to update ETA of: \");\r\n        int flightToUpdate = input.nextInt();\r\n        ArrivingFlight flightToBeUpdated = searchAndReturnArrFlight(flightToUpdate);\r\n        System.out.println(\"Please enter updated ETA: \");\r\n        String updatedETA = input.next();\r\n        flightToBeUpdated.setEstimatedArrivalTime(updatedETA);\r\n        System.out.println(\"Please enter new status: \");\r\n        String newStatus = input.next().toUpperCase();\r\n        flightToBeUpdated.setStatus(newStatus);\r\n        System.out.println(\"New updated flight: (\" + printArrivingFlight(flightToBeUpdated) + \")\");\r\n    }\r\n\r\n    // REQUIRES: Given flightNumber must already be contained in the ArrivingFlights List\r\n    // MODIFIES: this\r\n    // EFFECTS: returns ArrivingFlight with given flightNumber from List arrivingFlights\r\n    private ArrivingFlight searchAndReturnArrFlight(int noOfFlightToUpdate) {\r\n        ArrivingFlight requiredFlight = null;\r\n        List<ArrivingFlight> arrivingFlights = flightDisplay.getArrivingFlights();\r\n        for (ArrivingFlight flight : arrivingFlights) {\r\n            if (flight.getFlightNumber() == noOfFlightToUpdate) {\r\n                requiredFlight = flight;\r\n            }\r\n        }\r\n        return requiredFlight;\r\n    }\r\n\r\n    // REQUIRES: Given flightNumber must already be contained in the DepartingFlights List\r\n    // MODIFIES: this\r\n    // EFFECTS: returns DepartingFlight with given flightNumber from List departingFlights\r\n    private DepartingFlight searchAndReturnDepFlight(int flightToUpdate) {\r\n        DepartingFlight requiredFlight = null;\r\n        List<DepartingFlight> departingFlights = flightDisplay.getDepartingFlights();\r\n        for (DepartingFlight flight : departingFlights) {\r\n            if (flight.getFlightNumber() == flightToUpdate) {\r\n                requiredFlight = flight;\r\n            }\r\n        }\r\n        return requiredFlight;\r\n    }\r\n\r\n    // REQUIRES: Flight passed to function must be in List arrivingFlights\r\n    // MODIFIES: this\r\n    // EFFECTS: updates time and also status of given flight to \"cancelled\"\r\n    private void cancelArrivingFlight() {\r\n        System.out.println(\"Please input flight number for which you would like to update status to CANCELLED\");\r\n        int newCancelFlight = input.nextInt();\r\n        ArrivingFlight flightToCancel = searchAndReturnArrFlight(newCancelFlight);\r\n        flightToCancel.cancelFlight(flightToCancel);\r\n    }\r\n\r\n    // REQUIRES: a flight already in the list\r\n    // MODIFIES: this\r\n    // EFFECTS: removes an arriving flight from the List arrivingFlights\r\n    private void removeArrivingFlight() {\r\n        System.out.println(\"Please input flight number for which you would like to remove\");\r\n        int flightToRemove = input.nextInt();\r\n        ArrivingFlight flightToBeRemoved = searchAndReturnArrFlight(flightToRemove);\r\n        flightDisplay.removeArrivingFlight(flightToBeRemoved);\r\n        System.out.println(\"You removed the following flight: (\" + printArrivingFlight(flightToBeRemoved) + \")\");\r\n    }\r\n\r\n    // REQUIRES: a flight not already in the list\r\n    // MODIFIES: this\r\n    // EFFECTS: adds a departing flight to the departingFlights\r\n    private void addDepartingFlight() {\r\n        System.out.println(\"Please enter airline\");\r\n        String airline = input.next().toUpperCase();\r\n        System.out.println(\"Please enter flight number\");\r\n        int flightNumber = input.nextInt();\r\n        System.out.println(\"Please enter destination\");\r\n        String destination = input.next();\r\n        System.out.println(\"Please input status\");\r\n        String status = input.next().toUpperCase();\r\n        System.out.println(\"Please enter scheduled departure time\");\r\n        String scheduledTime = input.next();\r\n        System.out.println(\"Please enter estimated departure time\");\r\n        String estimatedTime = input.next();\r\n        DepartingFlight newFlight = new DepartingFlight(airline, flightNumber, destination, status, scheduledTime,\r\n                estimatedTime);\r\n        flightDisplay.addDepartingFlight(newFlight);\r\n        System.out.println(\"You added: (\" + printDepartingFlight(newFlight) + \")\");\r\n    }\r\n\r\n    // REQUIRES: Flight input must already be in List departingFlights\r\n    // MODIFIES: this\r\n    // EFFECTS: updates status and ETD of input flight according to user input\r\n    private void updateDepartingFlight() {\r\n        System.out.println(\"Please enter flight number of flight you would like to update ETD of: \");\r\n        int flightToUpdate = input.nextInt();\r\n        DepartingFlight flightToBeUpdated = searchAndReturnDepFlight(flightToUpdate);\r\n        System.out.println(\"Please enter updated ETD: \");\r\n        String updatedETD = input.next();\r\n        flightToBeUpdated.setEstimatedDepartureTime(updatedETD);\r\n        System.out.println(\"Please enter new status: \");\r\n        String newStatus = input.next().toUpperCase();\r\n        flightToBeUpdated.setStatus(newStatus);\r\n        System.out.println(\"New updated flight: (\" + printDepartingFlight(flightToBeUpdated) + \")\");\r\n    }\r\n\r\n    // REQUIRES: Flight passed to function must be in List departingFlights\r\n    // MODIFIES: this\r\n    // EFFECTS: updates time and also status of given flight to \"cancelled\"\r\n    private void cancelDepartingFlight() {\r\n        System.out.println(\"Please input flight number for which you would like to update status to CANCELLED\");\r\n        int newCancelFlight = input.nextInt();\r\n        DepartingFlight flightToCancel = searchAndReturnDepFlight(newCancelFlight);\r\n        flightToCancel.cancelFlight(flightToCancel);\r\n    }\r\n\r\n    // REQUIRES: a flight already in the list\r\n    // MODIFIES: this\r\n    // EFFECTS: removes a departing flight from List departingFlight\r\n    private void removeDepartingFlight() {\r\n        System.out.println(\"Please input flight number for which you would like to remove\");\r\n        int flightToRemove = input.nextInt();\r\n        DepartingFlight flightToBeRemoved = searchAndReturnDepFlight(flightToRemove);\r\n        flightDisplay.removeDepartingFlight(flightToBeRemoved);\r\n        System.out.println(\"You removed the following flight: (\" + printDepartingFlight(flightToBeRemoved) + \")\");\r\n    }\r\n\r\n    // REQUIRES: A ArrivingFlight that is already in the List arrivingList\r\n    // MODIFIES: this\r\n    // EFFECTS: Prints the information in fields of ArrivingFlight input to flight\r\n    private String printArrivingFlight(ArrivingFlight flight) {\r\n        return flight.getAirline() + \", \" + flight.getFlightNumber() + \", \" + \"Arriving from: \"\r\n                + flight.getOrigin() + \", \" + flight.getStatus() + \", \" + flight.getScheduledArrivalTime() + \", \"\r\n                + flight.getEstimatedArrivalTime();\r\n    }\r\n\r\n\r\n    // REQUIRES: A DepartingFlight that is already in the List departingList\r\n    // MODIFIES: this\r\n    // EFFECTS: Prints the information in fields of DepartingFlight input to flight\r\n    private String printDepartingFlight(DepartingFlight flight) {\r\n        return flight.getAirline() + \", \" + flight.getFlightNumber() + \", \" + \"Departing to: \"\r\n                + flight.getDestination() + \", \" + flight.getStatus() + \", \" + flight.getScheduledDepartureTime() + \", \"\r\n                + flight.getEstimatedDepartureTime();\r\n    }\r\n\r\n    // REQUIRES: Alert must already be in the List emergencyAlerts\r\n    // MODIFIES: this\r\n    // EFFECTS: Prints the emergencyAlert with information in both of its instance variables\r\n    private void printEmergencyAlert(Alert alert) {\r\n        System.out.println(alert.getId() + \"). \" + alert.getAlert());\r\n    }\r\n\r\n    // JSON methods:\r\n\r\n    // EFFECTS: saves the flight display to file\r\n    private void saveFlightDisplay() {\r\n        try {\r\n            jsonWriter.open();\r\n            jsonWriter.write(flightDisplay);\r\n            jsonWriter.close();\r\n            System.out.println(\"Saved \" + /* flight display.getName() +*/ \" to \" + JSON_STORE);\r\n        } catch (FileNotFoundException e) {\r\n            System.out.println(\"Unable to write to file: \" + JSON_STORE);\r\n        }\r\n    }\r\n\r\n    // MODIFIES: this\r\n    // EFFECTS: loads workroom from file\r\n    private void loadFlightDisplay() {\r\n        try {\r\n            flightDisplay = jsonReader.read();\r\n            System.out.println(\"Loaded Flight Information Display from \" + JSON_STORE);\r\n        } catch (IOException e) {\r\n            System.out.println(\"Unable to read from file: \" + JSON_STORE);\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/ui/FlightDisplayApp.java b/src/main/ui/FlightDisplayApp.java
+--- a/src/main/ui/FlightDisplayApp.java	(revision 1ed666b89505788d474c05908b1f58f3a1f8619d)
++++ b/src/main/ui/FlightDisplayApp.java	(date 1674329718660)
+@@ -32,15 +32,6 @@
+         runFlightDisplay();
+     }
+ 
+-    /**
+-     * NOTE TO GRADERS: The runFlightDisplay() method's while loop and initializeSetup,
+-     *                  printFlightDisplay and executeUserCommand method
+-     *                  [generally runFlightMethod()] were inspired by similar methods
+-     *                  found in the Teller application provided as example on the edX
+-     *                  course page.
+-     *                  Also, the separation of FlightDisplay and FlightDisplayApp was taken from Json Demo provided to
+-     *                  students of CPSC 210.
+-     */
+     // MODIFIES: this
+     // EFFECTS: Runs the application which will set up the FlightDisplay utilizing input from user
+     //          Loop runs until user chooses to quit
+Index: src/main/ui/FlightDisplayGUI.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ui;\r\n\r\nimport model.*;\r\nimport model.Event;\r\nimport persistence.JsonReader;\r\nimport persistence.JsonWriter;\r\n\r\nimport javax.swing.*;\r\nimport javax.swing.table.DefaultTableModel;\r\nimport javax.swing.table.JTableHeader;\r\nimport java.awt.*;\r\nimport java.awt.event.ActionEvent;\r\nimport java.awt.event.ActionListener;\r\nimport java.io.FileNotFoundException;\r\nimport java.io.IOException;\r\nimport java.net.MalformedURLException;\r\nimport java.net.URL;\r\nimport java.util.List;\r\n\r\nimport static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;\r\nimport static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;\r\n\r\n/**\r\n * This class provides the Graphical User Interface for the FlightDisplayApp\r\n */\r\npublic class FlightDisplayGUI extends JPanel implements ActionListener {\r\n\r\n    private static final String JSON_STORE = \"./data/workroom.json\";\r\n    private JsonWriter jsonWriter;\r\n    private JsonReader jsonReader;\r\n    FlightDisplay fd;\r\n    Color airportYellow = new Color(255, 233, 0);\r\n\r\n    JButton arrAddButton;\r\n    JButton arrUpdateButton;\r\n    JButton arrCancelButton;\r\n    JButton arrRemoveButton;\r\n    JButton depAddButton;\r\n    JButton depUpdateButton;\r\n    JButton depCancelButton;\r\n    JButton depRemoveButton;\r\n    JButton alertAddButton;\r\n    JButton alertRemoveButton;\r\n    JTable table;\r\n    DefaultTableModel modelTable;\r\n    JTable table1;\r\n    DefaultTableModel modelTable1;\r\n    JTable table2;\r\n    DefaultTableModel modelTable2;\r\n    GridBagConstraints gbc = new GridBagConstraints();\r\n\r\n    @SuppressWarnings({\"checkstyle:MethodLength\", \"checkstyle:SuppressWarnings\"})\r\n    public static void main(String[] args) {\r\n        SplashJava splash = new SplashJava();\r\n        try {\r\n            Thread.sleep(1000);\r\n            splash.dispose();\r\n        } catch (Exception e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n        FlightDisplayGUI m = new FlightDisplayGUI();\r\n        JFrame frame = new JFrame();\r\n        frame.setSize(new Dimension(904, 642));\r\n        frame.setTitle(\"YVR Flight Information Display\");\r\n        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\r\n        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);\r\n        frame.setVisible(true);\r\n        frame.setResizable(false);\r\n        ImageIcon frameIcon = new ImageIcon(\"src/main/ui/FIDS_Icon.png\");\r\n        frame.setIconImage(frameIcon.getImage());\r\n        frame.add(m);\r\n        frame.pack();\r\n\r\n        frame.addWindowListener(new java.awt.event.WindowAdapter() {\r\n            @Override\r\n            public void windowClosing(java.awt.event.WindowEvent windowEvent) {\r\n                for (Event e : EventLog.getInstance()) {\r\n                    System.out.println(e.toString());\r\n                }\r\n                //THEN you can exit the program\r\n                System.exit(0);\r\n                EventLog.getInstance().clear();\r\n            }\r\n        });\r\n\r\n\r\n    }\r\n\r\n    /*\r\n     * EFFECTS: Creates the instance of the Graphical User Interface for the FlightDisplay\r\n     */\r\n    @SuppressWarnings({\"checkstyle:MethodLength\", \"checkstyle:SuppressWarnings\"})\r\n    public FlightDisplayGUI() {\r\n        fd = new FlightDisplay();\r\n        jsonWriter = new JsonWriter(JSON_STORE);\r\n        jsonReader = new JsonReader(JSON_STORE);\r\n        setLayout(new GridBagLayout());\r\n        setBackground(Color.black);\r\n\r\n        String[] columnNames = {\"Airline\",\r\n                \"Flight Number\",\r\n                \"Origin\",\r\n                \"Status\",\r\n                \"Scheduled Arrival Time\",\r\n                \"Estimated Arrival Time\"};\r\n        String[] alertColumnNames = {\"ID\", \"Alert\"};\r\n\r\n        Object[][] data = flightTableCreator();\r\n        Object[][] alertData = {};\r\n\r\n        JPanel arrFlightsPanel = new JPanel();\r\n        table = new JTable(new DefaultTableModel(data, columnNames) {\r\n            @Override\r\n            public boolean isCellEditable(int row, int column) {\r\n                return false;\r\n            }\r\n        });\r\n        table.setFocusable(false);\r\n        table.setBackground(Color.black);\r\n        table.setForeground(airportYellow);\r\n        table.setRowSelectionAllowed(false);\r\n        table.setPreferredScrollableViewportSize(new Dimension(770, 150));\r\n        table.setFillsViewportHeight(true);\r\n        JTableHeader tableHeader = table.getTableHeader();\r\n        tableHeader.setBackground(airportYellow);\r\n        tableHeader.setForeground(Color.black);\r\n        modelTable = (DefaultTableModel) table.getModel();\r\n\r\n        arrFlightsPanel.add(new JScrollPane(table, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));\r\n        arrFlightsPanel.setBackground(Color.black);\r\n\r\n        JPanel depFlightsPanel = new JPanel();\r\n        table1 = new JTable(new DefaultTableModel(data, columnNames) {\r\n\r\n            @Override\r\n            public boolean isCellEditable(int row, int column) {\r\n                return false;\r\n            }\r\n        });\r\n        table1.setPreferredScrollableViewportSize(new Dimension(770, 150));\r\n        table1.setFillsViewportHeight(true);\r\n        table1.setFocusable(false);\r\n        table1.setRowSelectionAllowed(false);\r\n        table1.setBackground(Color.black);\r\n        table1.setForeground(airportYellow);\r\n        JTableHeader tableHeader1 = table1.getTableHeader();\r\n        tableHeader1.setBackground(airportYellow);\r\n        tableHeader1.setForeground(Color.black);\r\n        modelTable1 = (DefaultTableModel) table1.getModel();\r\n\r\n        depFlightsPanel.add(new JScrollPane(table1, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));\r\n        depFlightsPanel.setBackground(Color.black);\r\n\r\n        JPanel emgAlertsPanel = new JPanel();\r\n        table2 = new JTable(new DefaultTableModel(data, alertColumnNames) {\r\n\r\n            @Override\r\n            public boolean isCellEditable(int row, int column) {\r\n                return false;\r\n            }\r\n        });\r\n        table2.setBackground(Color.black);\r\n        table2.setForeground(airportYellow);\r\n        table2.setPreferredScrollableViewportSize(new Dimension(770, 150));\r\n        table2.setFillsViewportHeight(true);\r\n        table2.setFocusable(false);\r\n        table2.setRowSelectionAllowed(false);\r\n        JTableHeader tableHeader2 = table2.getTableHeader();\r\n        tableHeader2.setBackground(airportYellow);\r\n        tableHeader2.setForeground(Color.black);\r\n        modelTable2 = (DefaultTableModel) table2.getModel();\r\n        emgAlertsPanel.add(new JScrollPane(table2, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));\r\n        emgAlertsPanel.setBackground(Color.black);\r\n\r\n        JLabel arrFlightsLabel = new JLabel(\"    Arriving Flights\");\r\n        arrFlightsLabel.setForeground(Color.white);\r\n        JLabel depFlightsLabel = new JLabel(\"    Departing Flights\");\r\n        depFlightsLabel.setForeground(Color.white);\r\n        JLabel emgAlertsLabel = new JLabel(\"    Emergency Alerts\");\r\n        emgAlertsLabel.setForeground(Color.white);\r\n        // setting coordinates of all panels containing tables, buttons, and labels\r\n        gbc.anchor = GridBagConstraints.LINE_START;\r\n        gbc.gridx = 0;\r\n        gbc.gridy = 0;\r\n        add(arrFlightsLabel, gbc);\r\n        gbc.gridx = 0;\r\n        gbc.gridy = 1;\r\n        add(arrFlightsPanel, gbc);\r\n\r\n        gbc.gridx = 0;\r\n        gbc.gridy = 2;\r\n        add(depFlightsLabel, gbc);\r\n        gbc.gridx = 0;\r\n        gbc.gridy = 3;\r\n        add(depFlightsPanel, gbc);\r\n\r\n        gbc.gridx = 0;\r\n        gbc.gridy = 4;\r\n        add(emgAlertsLabel, gbc);\r\n        gbc.gridx = 0;\r\n        gbc.gridy = 5;\r\n        add(emgAlertsPanel, gbc);\r\n\r\n        gbc.anchor = GridBagConstraints.PAGE_START;\r\n        gbc.insets = new Insets(3, 3, 3, 3);\r\n\r\n        JPanel arrFlightButtons = new JPanel(new GridBagLayout());\r\n        arrFlightButtons.setBackground(Color.black);\r\n        arrAddButton = new JButton(\"Add Arriving Flight\");\r\n        arrAddButton.addActionListener(this);\r\n        gbc.fill = GridBagConstraints.HORIZONTAL;\r\n        gbc.gridx = 2;\r\n        gbc.gridy = 1;\r\n        arrFlightButtons.add(arrAddButton, gbc);\r\n        arrUpdateButton = new JButton(\"Update Arriving Flight\");\r\n        arrUpdateButton.addActionListener(this);\r\n        gbc.gridx = 3;\r\n        gbc.gridy = 1;\r\n        arrFlightButtons.add(arrUpdateButton, gbc);\r\n        arrCancelButton = new JButton(\"Cancel Arriving Flight\");\r\n        arrCancelButton.addActionListener(this);\r\n        gbc.gridx = 2;\r\n        gbc.gridy = 2;\r\n        arrFlightButtons.add(arrCancelButton, gbc);\r\n        arrRemoveButton = new JButton(\"Remove Arriving Flight\");\r\n        arrRemoveButton.addActionListener(this);\r\n        gbc.gridx = 3;\r\n        gbc.gridy = 2;\r\n        arrFlightButtons.add(arrRemoveButton, gbc);\r\n        gbc.gridx = 1;\r\n        gbc.gridy = 1;\r\n        add(arrFlightButtons, gbc);\r\n\r\n        setButtonForegrndAndBckgrndClr(arrCancelButton, airportYellow, Color.black);\r\n        setButtonForegrndAndBckgrndClr(arrAddButton, airportYellow, Color.black);\r\n        setButtonForegrndAndBckgrndClr(arrRemoveButton, airportYellow, Color.black);\r\n        setButtonForegrndAndBckgrndClr(arrUpdateButton, airportYellow, Color.black);\r\n\r\n\r\n        JPanel depFlightButtons = new JPanel(new GridBagLayout());\r\n        depFlightButtons.setBackground(Color.black);\r\n        depAddButton = new JButton(\"Add Departing Flight\");\r\n        depAddButton.addActionListener(this);\r\n        gbc.fill = GridBagConstraints.HORIZONTAL;\r\n        gbc.gridx = 2;\r\n        gbc.gridy = 1;\r\n        depFlightButtons.add(depAddButton, gbc);\r\n        depUpdateButton = new JButton(\"Update Departing Flight\");\r\n        depUpdateButton.addActionListener(this);\r\n        gbc.gridx = 3;\r\n        gbc.gridy = 1;\r\n        depFlightButtons.add(depUpdateButton, gbc);\r\n        depCancelButton = new JButton(\"Cancel Departing Flight\");\r\n        depCancelButton.addActionListener(this);\r\n        gbc.gridx = 2;\r\n        gbc.gridy = 2;\r\n        depFlightButtons.add(depCancelButton, gbc);\r\n        depRemoveButton = new JButton(\"Remove Departing Flight\");\r\n        depRemoveButton.addActionListener(this);\r\n        gbc.gridx = 3;\r\n        gbc.gridy = 2;\r\n        depFlightButtons.add(depRemoveButton, gbc);\r\n        gbc.gridx = 1;\r\n        gbc.gridy = 3;\r\n        add(depFlightButtons, gbc);\r\n        setButtonForegrndAndBckgrndClr(depCancelButton, airportYellow, Color.black);\r\n        setButtonForegrndAndBckgrndClr(depAddButton, airportYellow, Color.black);\r\n        setButtonForegrndAndBckgrndClr(depRemoveButton, airportYellow, Color.black);\r\n        setButtonForegrndAndBckgrndClr(depUpdateButton, airportYellow, Color.black);\r\n\r\n        JPanel emergencyAlertButtons = new JPanel(new GridBagLayout());\r\n        emergencyAlertButtons.setBackground(Color.black);\r\n        alertAddButton = new JButton(\"Add Alert\");\r\n        alertAddButton.addActionListener(this);\r\n        gbc.fill = GridBagConstraints.HORIZONTAL;\r\n        gbc.gridx = 0;\r\n        gbc.gridy = 0;\r\n        emergencyAlertButtons.add(alertAddButton, gbc);\r\n        alertRemoveButton = new JButton(\"Remove Alert\");\r\n        alertRemoveButton.addActionListener(this);\r\n        gbc.gridx = 1;\r\n        gbc.gridy = 0;\r\n        emergencyAlertButtons.add(alertRemoveButton, gbc);\r\n        JButton saveButton = new JButton(\"Save to File\");\r\n        saveButton.addActionListener(this);\r\n        gbc.gridx = 0;\r\n        gbc.gridy = 6;\r\n        emergencyAlertButtons.add(saveButton, gbc);\r\n        JButton loadButton = new JButton(\"Load from File\");\r\n        loadButton.addActionListener(this);\r\n        gbc.gridx = 1;\r\n        gbc.gridy = 6;\r\n        emergencyAlertButtons.add(loadButton, gbc);\r\n        gbc.gridx = 1;\r\n        gbc.gridy = 5;\r\n        add(emergencyAlertButtons, gbc);\r\n        setButtonForegrndAndBckgrndClr(alertAddButton, airportYellow, Color.black);\r\n        setButtonForegrndAndBckgrndClr(alertRemoveButton, airportYellow, Color.black);\r\n        setButtonForegrndAndBckgrndClr(saveButton, airportYellow, Color.black);\r\n        setButtonForegrndAndBckgrndClr(loadButton, airportYellow, Color.black);\r\n    }\r\n\r\n    /*\r\n     * REQUIRES: button for which color is being changed,\r\n     * color for foreground, and color for background\r\n     * MODIFIES: this\r\n     * EFFECTS: sets background and foreground of button passed as argument\r\n     */\r\n    public void setButtonForegrndAndBckgrndClr(JButton button, Color bkgnd, Color frgnd) {\r\n        button.setBackground(bkgnd);\r\n        button.setForeground(frgnd);\r\n    }\r\n\r\n    /*\r\n     * MODIFIES: this\r\n     * EFFECTS: creates 2 dimensional array for the tables for the display\r\n     *  (Arriving, Departing, and Emergency Alerts)\r\n     */\r\n    public Object[][] flightTableCreator() {\r\n        List<ArrivingFlight> flightList = fd.getArrivingFlights();\r\n\r\n        Object[][] toBeReturned = new Object[flightList.size()][];\r\n\r\n        for (int i = 0; i <= flightList.size() - 1; i++) {\r\n            toBeReturned[i] = new Object[]{flightList.get(i).getAirline(), flightList.get(i).getFlightNumber(),\r\n                    flightList.get(i).getOrigin(), flightList.get(i).getStatus(),\r\n                    flightList.get(i).getEstimatedArrivalTime(), flightList.get(i).getScheduledArrivalTime()};\r\n        }\r\n        return toBeReturned;\r\n    }\r\n\r\n\r\n    /*\r\n     * EFFECTS: checks for button clicks and performs action accordingly\r\n     */\r\n    @SuppressWarnings({\"checkstyle:MethodLength\", \"checkstyle:SuppressWarnings\"})\r\n    @Override\r\n    public void actionPerformed(ActionEvent e) {\r\n        if (e.getActionCommand().equals(\"Add Arriving Flight\")) {\r\n\r\n            String airline = JOptionPane.showInputDialog(\"Please Input Airline\");\r\n            String flightNumber = JOptionPane.showInputDialog(\"Please Input flightNumber\");\r\n            String origin = JOptionPane.showInputDialog(\"Please Input origin\");\r\n            String status = JOptionPane.showInputDialog(\"Please Input status\");\r\n            String scheduledArrivalTime = JOptionPane.showInputDialog(\"Please Input scheduledArrivalTime\");\r\n            String estimatedArrivalTime = JOptionPane.showInputDialog(\"Please Input estimatedArrivalTime\");\r\n\r\n            ArrivingFlight arrFlightToAdd;\r\n            if (!airline.equals(\"\") && !flightNumber.equals(\"\") && !origin.equals(\"\") && !status.equals(\"\")\r\n                    && !scheduledArrivalTime.equals(\"\") && !estimatedArrivalTime.equals(\"\")) {\r\n                arrFlightToAdd = new ArrivingFlight(airline, Integer.parseInt(flightNumber), origin, status,\r\n                        scheduledArrivalTime, estimatedArrivalTime);\r\n                fd.addArrivingFlight(arrFlightToAdd);\r\n                modelTable.addRow(new Object[]{arrFlightToAdd.getAirline(), arrFlightToAdd.getFlightNumber(),\r\n                        arrFlightToAdd.getStatus(), arrFlightToAdd.getOrigin(),\r\n                        arrFlightToAdd.getEstimatedArrivalTime(), arrFlightToAdd.getScheduledArrivalTime()});\r\n            } else {\r\n                JOptionPane.showMessageDialog(this, \"Please click on the 'Add Arriving Flight' \"\r\n                        + \"button again and enter flight data in all fields\");\r\n            }\r\n\r\n        } else if (e.getActionCommand().equals(\"Add Departing Flight\")) {\r\n\r\n            String airline = JOptionPane.showInputDialog(\"Please Input Airline\");\r\n            String flightNumber = JOptionPane.showInputDialog(\"Please Input flightNumber\");\r\n            String destination = JOptionPane.showInputDialog(\"Please Input destination\");\r\n            String status = JOptionPane.showInputDialog(\"Please Input status\");\r\n            String scheduledArrivalTime = JOptionPane.showInputDialog(\"Please Input scheduledDepartureTime\");\r\n            String estimatedArrivalTime = JOptionPane.showInputDialog(\"Please Input estimatedDepartureTime\");\r\n\r\n            DepartingFlight depFlightToAdd;\r\n            if (!airline.equals(\"\") && !flightNumber.equals(\"\") && !destination.equals(\"\") && !status.equals(\"\")\r\n                    && !scheduledArrivalTime.equals(\"\") && !estimatedArrivalTime.equals(\"\")) {\r\n                depFlightToAdd = new DepartingFlight(airline, Integer.parseInt(flightNumber), destination, status,\r\n                        scheduledArrivalTime, estimatedArrivalTime);\r\n                fd.addDepartingFlight(depFlightToAdd);\r\n                modelTable1.addRow(new Object[]{depFlightToAdd.getAirline(), depFlightToAdd.getFlightNumber(),\r\n                        depFlightToAdd.getStatus(), depFlightToAdd.getDestination(),\r\n                        depFlightToAdd.getEstimatedDepartureTime(), depFlightToAdd.getScheduledDepartureTime()});\r\n            } else {\r\n                JOptionPane.showMessageDialog(this, \"Please click on the 'Add Departing Flight' \"\r\n                        + \"button again and enter flight data in all fields\");\r\n            }\r\n\r\n        } else if (e.getActionCommand().equals(\"Update Arriving Flight\")) {\r\n\r\n            String rowOfFlightToUpdate = JOptionPane.showInputDialog(\"Please Input row number of the flight\"\r\n                    + \" you wish to update\");\r\n            String statusToUpdate = JOptionPane.showInputDialog(\"Please Input new status\");\r\n            String estimatedArrivalTimeToUpdate = JOptionPane.showInputDialog(\"Please Input new estimatedArrivalTime\");\r\n\r\n            if (!rowOfFlightToUpdate.equals(\"\") && !statusToUpdate.equals(\"\")\r\n                    && !estimatedArrivalTimeToUpdate.equals(\"\")) {\r\n                modelTable.setValueAt(statusToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 3);\r\n                modelTable.setValueAt(estimatedArrivalTimeToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 5);\r\n            } else {\r\n                JOptionPane.showMessageDialog(this, \"Please click on the 'Update Arriving Flight' \"\r\n                        + \"button again and enter flight data in all fields\");\r\n            }\r\n        } else if (e.getActionCommand().equals(\"Update Departing Flight\")) {\r\n\r\n            String rowOfFlightToUpdate = JOptionPane.showInputDialog(\"Please Input row number of the flight\"\r\n                    + \" you wish to update\");\r\n            String statusToUpdate = JOptionPane.showInputDialog(\"Please Input new status\");\r\n            String estimatedDepartureTimeToUpdate = JOptionPane.showInputDialog(\"Please Input new\"\r\n                    + \"estimatedDepartureTime\");\r\n\r\n            if (!rowOfFlightToUpdate.equals(\"\") && !statusToUpdate.equals(\"\")\r\n                    && !estimatedDepartureTimeToUpdate.equals(\"\")) {\r\n                modelTable1.setValueAt(statusToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 3);\r\n                modelTable1.setValueAt(estimatedDepartureTimeToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 5);\r\n            } else {\r\n                JOptionPane.showMessageDialog(this, \"Please click on the 'Update Departing Flight' \"\r\n                        + \"button again and enter flight data in all fields\");\r\n            }\r\n        } else if (e.getActionCommand().equals(\"Cancel Arriving Flight\")) {\r\n            String flightNumberToCancel = JOptionPane.showInputDialog(\"Please Input row of flight to cancel\");\r\n\r\n            if (!flightNumberToCancel.equals(\"\")) {\r\n                modelTable.setValueAt(\"CANCELLED\", Integer.parseInt(flightNumberToCancel) - 1, 3);\r\n            } else {\r\n                JOptionPane.showMessageDialog(this, \"Please click on the 'Cancel Arriving Flight' \"\r\n                        + \"button again and enter flight data in all fields\");\r\n            }\r\n        } else if (e.getActionCommand().equals(\"Remove Arriving Flight\")) {\r\n            String flightNumberToRemove = JOptionPane.showInputDialog(\"Please Input row number of flight to remove\");\r\n\r\n            if (!flightNumberToRemove.equals(\"\")) {\r\n                int idOfArrFlightToRemove = Integer.parseInt(modelTable.getValueAt(\r\n                        Integer.parseInt(flightNumberToRemove) - 1, 1).toString());\r\n                ArrivingFlight arrFlightToRemove = null;\r\n                for (ArrivingFlight arrFlight : fd.getArrivingFlights()) {\r\n                    if (arrFlight.getFlightNumber() == idOfArrFlightToRemove) {\r\n                        arrFlightToRemove = arrFlight;\r\n                    }\r\n                }\r\n                fd.removeArrivingFlight(arrFlightToRemove);\r\n                modelTable.removeRow(Integer.parseInt(flightNumberToRemove) - 1);\r\n            } else {\r\n                JOptionPane.showMessageDialog(this, \"Please click on the 'Remove Arriving Flight' \"\r\n                        + \"button again and enter flight data in all fields\");\r\n            }\r\n        } else if (e.getActionCommand().equals(\"Cancel Departing Flight\")) {\r\n            String flightNumberToCancel = JOptionPane.showInputDialog(\"Please Input row of flight to cancel\");\r\n\r\n            if (!flightNumberToCancel.equals(\"\")) {\r\n                modelTable1.setValueAt(\"CANCELLED\", Integer.parseInt(flightNumberToCancel) - 1, 3);\r\n            } else {\r\n                JOptionPane.showMessageDialog(this, \"Please click on the 'Cancel Arriving Flight' \"\r\n                        + \"button again and enter flight data in all fields\");\r\n            }\r\n        } else if (e.getActionCommand().equals(\"Remove Departing Flight\")) {\r\n            String flightNumberToRemove = JOptionPane.showInputDialog(\"Please Input row number of flight to remove\");\r\n\r\n            if (!flightNumberToRemove.equals(\"\")) {\r\n                int idOfDepFlightToRemove = Integer.parseInt(modelTable1.getValueAt(\r\n                        Integer.parseInt(flightNumberToRemove) - 1, 1).toString());\r\n                DepartingFlight depFlightToRemove = null;\r\n                for (DepartingFlight depFlight : fd.getDepartingFlights()) {\r\n                    if (depFlight.getFlightNumber() == idOfDepFlightToRemove) {\r\n                        depFlightToRemove = depFlight;\r\n                    }\r\n                }\r\n                fd.removeDepartingFlight(depFlightToRemove);\r\n                modelTable1.removeRow(Integer.parseInt(flightNumberToRemove) - 1);\r\n            } else {\r\n                JOptionPane.showMessageDialog(this, \"Please click on the 'Remove Arriving Flight' \"\r\n                        + \"button again and enter flight data in all fields\");\r\n            }\r\n        } else if (e.getActionCommand().equals(\"Add Alert\")) {\r\n\r\n            String alertIDToAdd = JOptionPane.showInputDialog(\"Please Input alert ID to add \\n \"\r\n                    + \"It should be a positive integer\");\r\n            String alertToAdd = JOptionPane.showInputDialog(\"Please Input alert to add\");\r\n\r\n            if (!alertToAdd.equals(\"\")) {\r\n                Alert emgAlertToAdd = new Alert(Integer.parseInt(alertIDToAdd), alertToAdd);\r\n                modelTable2.addRow(new Object[]{alertIDToAdd, alertToAdd});\r\n                fd.addEmergencyAlert(emgAlertToAdd);\r\n            } else {\r\n                JOptionPane.showMessageDialog(this, \"Please click on the 'Add Alert' \"\r\n                        + \"button again and enter flight data in all fields\");\r\n            }\r\n        } else if (e.getActionCommand().equals(\"Remove Alert\")) {\r\n\r\n            String rowOfAlertToRemove = JOptionPane.showInputDialog(\"Please Input row number of alert to remove\");\r\n\r\n            if (!rowOfAlertToRemove.equals(\"\")) {\r\n                int idOfAlertToRemove = Integer.parseInt(modelTable2.getValueAt(\r\n                        Integer.parseInt(rowOfAlertToRemove) - 1, 0).toString());\r\n                fd.removeEmergencyAlert(idOfAlertToRemove);\r\n                modelTable2.removeRow(Integer.parseInt(rowOfAlertToRemove) - 1);\r\n            } else {\r\n                JOptionPane.showMessageDialog(this, \"Please click on the 'Remove Alert' \"\r\n                        + \"button again and enter flight data in all fields\");\r\n            }\r\n        } else if (e.getActionCommand().equals(\"Save to File\")) {\r\n            try {\r\n                jsonWriter.open();\r\n                jsonWriter.write(fd);\r\n                jsonWriter.close();\r\n                System.out.println(\"Saved \" + /* flight display.getName() +*/ \" to \" + JSON_STORE);\r\n            } catch (FileNotFoundException exc) {\r\n                System.out.println(\"Unable to write to file: \" + JSON_STORE);\r\n            }\r\n        } else if (e.getActionCommand().equals(\"Load from File\")) {\r\n            try {\r\n                fd = jsonReader.read();\r\n                String[] columnNames = {\"Airline\",\r\n                        \"Flight Number\",\r\n                        \"Origin\",\r\n                        \"Status\",\r\n                        \"Scheduled Arrival Time\",\r\n                        \"Estimated Arrival Time\"};\r\n                Object[][] data = flightTableCreator();\r\n\r\n                for (ArrivingFlight arrFlight : fd.getArrivingFlights()) {\r\n                    modelTable.addRow(new Object[]{arrFlight.getAirline(), arrFlight.getFlightNumber(),\r\n                            arrFlight.getStatus(), arrFlight.getOrigin(),\r\n                            arrFlight.getEstimatedArrivalTime(), arrFlight.getScheduledArrivalTime()});\r\n                }\r\n\r\n                for (DepartingFlight depFlight : fd.getDepartingFlights()) {\r\n                    modelTable1.addRow(new Object[]{depFlight.getAirline(), depFlight.getFlightNumber(),\r\n                            depFlight.getStatus(), depFlight.getDestination(),\r\n                            depFlight.getEstimatedDepartureTime(), depFlight.getScheduledDepartureTime()});\r\n                }\r\n\r\n                for (Alert emgAlert : fd.getEmergencyAlerts()) {\r\n                    modelTable2.addRow(new Object[]{emgAlert.getId(), emgAlert.getAlert()});\r\n                }\r\n\r\n                System.out.println(\"Loaded Flight Information Display from \" + JSON_STORE);\r\n            } catch (IOException exc) {\r\n                System.out.println(\"Unable to read from file: \" + JSON_STORE);\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/ui/FlightDisplayGUI.java b/src/main/ui/FlightDisplayGUI.java
+--- a/src/main/ui/FlightDisplayGUI.java	(revision 1ed666b89505788d474c05908b1f58f3a1f8619d)
++++ b/src/main/ui/FlightDisplayGUI.java	(date 1670054474499)
+@@ -13,8 +13,6 @@
+ import java.awt.event.ActionListener;
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
+-import java.net.MalformedURLException;
+-import java.net.URL;
+ import java.util.List;
+ 
+ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
+@@ -41,23 +39,18 @@
+     JButton depRemoveButton;
+     JButton alertAddButton;
+     JButton alertRemoveButton;
+-    JTable table;
+-    DefaultTableModel modelTable;
+-    JTable table1;
+-    DefaultTableModel modelTable1;
+-    JTable table2;
+-    DefaultTableModel modelTable2;
++    JTable arrFlightTable;
++    DefaultTableModel modelArrFlightTable;
++    JTable depFlightTable;
++    DefaultTableModel modelDepFlightTable;
++    JTable emgAlertTable;
++    DefaultTableModel modelEmgAlertTable;
+     GridBagConstraints gbc = new GridBagConstraints();
+ 
+     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
+     public static void main(String[] args) {
+         SplashJava splash = new SplashJava();
+-        try {
+-            Thread.sleep(1000);
+-            splash.dispose();
+-        } catch (Exception e) {
+-            e.printStackTrace();
+-        }
++        runSplashScreen(splash);
+ 
+         FlightDisplayGUI m = new FlightDisplayGUI();
+         JFrame frame = new JFrame();
+@@ -83,18 +76,17 @@
+                 EventLog.getInstance().clear();
+             }
+         });
+-
+-
+     }
+ 
+     /*
+      * EFFECTS: Creates the instance of the Graphical User Interface for the FlightDisplay
+      */
++
+     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
+     public FlightDisplayGUI() {
+         fd = new FlightDisplay();
+-        jsonWriter = new JsonWriter(JSON_STORE);
+-        jsonReader = new JsonReader(JSON_STORE);
++        jsonClassFieldsInitialization();
++
+         setLayout(new GridBagLayout());
+         setBackground(Color.black);
+ 
+@@ -107,70 +99,25 @@
+         String[] alertColumnNames = {"ID", "Alert"};
+ 
+         Object[][] data = flightTableCreator();
+-        Object[][] alertData = {};
+ 
+         JPanel arrFlightsPanel = new JPanel();
+-        table = new JTable(new DefaultTableModel(data, columnNames) {
+-            @Override
+-            public boolean isCellEditable(int row, int column) {
+-                return false;
+-            }
+-        });
+-        table.setFocusable(false);
+-        table.setBackground(Color.black);
+-        table.setForeground(airportYellow);
+-        table.setRowSelectionAllowed(false);
+-        table.setPreferredScrollableViewportSize(new Dimension(770, 150));
+-        table.setFillsViewportHeight(true);
+-        JTableHeader tableHeader = table.getTableHeader();
+-        tableHeader.setBackground(airportYellow);
+-        tableHeader.setForeground(Color.black);
+-        modelTable = (DefaultTableModel) table.getModel();
++        setupArrFlightsTable(columnNames, data);
+ 
+-        arrFlightsPanel.add(new JScrollPane(table, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
++        arrFlightsPanel.add(new JScrollPane(
++                arrFlightTable, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
+         arrFlightsPanel.setBackground(Color.black);
+ 
+         JPanel depFlightsPanel = new JPanel();
+-        table1 = new JTable(new DefaultTableModel(data, columnNames) {
++        setUpDepFlightsTable(columnNames, data);
+ 
+-            @Override
+-            public boolean isCellEditable(int row, int column) {
+-                return false;
+-            }
+-        });
+-        table1.setPreferredScrollableViewportSize(new Dimension(770, 150));
+-        table1.setFillsViewportHeight(true);
+-        table1.setFocusable(false);
+-        table1.setRowSelectionAllowed(false);
+-        table1.setBackground(Color.black);
+-        table1.setForeground(airportYellow);
+-        JTableHeader tableHeader1 = table1.getTableHeader();
+-        tableHeader1.setBackground(airportYellow);
+-        tableHeader1.setForeground(Color.black);
+-        modelTable1 = (DefaultTableModel) table1.getModel();
+-
+-        depFlightsPanel.add(new JScrollPane(table1, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
++        depFlightsPanel.add(new JScrollPane(
++                depFlightTable, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
+         depFlightsPanel.setBackground(Color.black);
+ 
+         JPanel emgAlertsPanel = new JPanel();
+-        table2 = new JTable(new DefaultTableModel(data, alertColumnNames) {
+-
+-            @Override
+-            public boolean isCellEditable(int row, int column) {
+-                return false;
+-            }
+-        });
+-        table2.setBackground(Color.black);
+-        table2.setForeground(airportYellow);
+-        table2.setPreferredScrollableViewportSize(new Dimension(770, 150));
+-        table2.setFillsViewportHeight(true);
+-        table2.setFocusable(false);
+-        table2.setRowSelectionAllowed(false);
+-        JTableHeader tableHeader2 = table2.getTableHeader();
+-        tableHeader2.setBackground(airportYellow);
+-        tableHeader2.setForeground(Color.black);
+-        modelTable2 = (DefaultTableModel) table2.getModel();
+-        emgAlertsPanel.add(new JScrollPane(table2, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
++        setUpEmgAlertTable(alertColumnNames, data);
++        emgAlertsPanel.add(new JScrollPane(
++                emgAlertTable, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED));
+         emgAlertsPanel.setBackground(Color.black);
+ 
+         JLabel arrFlightsLabel = new JLabel("    Arriving Flights");
+@@ -181,64 +128,84 @@
+         emgAlertsLabel.setForeground(Color.white);
+         // setting coordinates of all panels containing tables, buttons, and labels
+         gbc.anchor = GridBagConstraints.LINE_START;
+-        gbc.gridx = 0;
+-        gbc.gridy = 0;
++        setGbcConstants(0, 0);
+         add(arrFlightsLabel, gbc);
+-        gbc.gridx = 0;
+-        gbc.gridy = 1;
++
++        setGbcConstants(0, 1);
+         add(arrFlightsPanel, gbc);
+ 
+-        gbc.gridx = 0;
+-        gbc.gridy = 2;
++        setGbcConstants(0, 2);
+         add(depFlightsLabel, gbc);
+-        gbc.gridx = 0;
+-        gbc.gridy = 3;
++
++        setGbcConstants(0, 3);
+         add(depFlightsPanel, gbc);
+ 
+-        gbc.gridx = 0;
+-        gbc.gridy = 4;
++        setGbcConstants(0, 4);
+         add(emgAlertsLabel, gbc);
+-        gbc.gridx = 0;
+-        gbc.gridy = 5;
++
++        setGbcConstants(0, 5);
+         add(emgAlertsPanel, gbc);
+ 
+         gbc.anchor = GridBagConstraints.PAGE_START;
+         gbc.insets = new Insets(3, 3, 3, 3);
+ 
+         JPanel arrFlightButtons = new JPanel(new GridBagLayout());
+-        arrFlightButtons.setBackground(Color.black);
+-        arrAddButton = new JButton("Add Arriving Flight");
+-        arrAddButton.addActionListener(this);
++        setUpArrFlightButtons(arrFlightButtons);
++
++        JPanel depFlightButtons = new JPanel(new GridBagLayout());
++        setUpDepFlightButtons(depFlightButtons);
++
++        JPanel emergencyAlertButtons = new JPanel(new GridBagLayout());
++        setUpEmgAlertButtons(emergencyAlertButtons);
++        setUpPersistenceButtons(emergencyAlertButtons);
++    }
++
++    private void jsonClassFieldsInitialization() {
++        jsonWriter = new JsonWriter(JSON_STORE);
++        jsonReader = new JsonReader(JSON_STORE);
++    }
++
++    private static void runSplashScreen(SplashJava splash) {
++        try {
++            Thread.sleep(2500);
++            splash.dispose();
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++    }
++
++    private void setUpPersistenceButtons(JPanel emergencyAlertButtons) {
++        JButton saveButton = new JButton("Save to File");
++        saveButton.addActionListener(this);
++        setGbcConstants(0, 6);
++        emergencyAlertButtons.add(saveButton, gbc);
++        JButton loadButton = new JButton("Load from File");
++        loadButton.addActionListener(this);
++        setGbcConstants(1, 6);
++        emergencyAlertButtons.add(loadButton, gbc);
++        setGbcConstants(1, 5);
++        add(emergencyAlertButtons, gbc);
++        setButtonForegrndAndBckgrndClr(saveButton, airportYellow, Color.black);
++        setButtonForegrndAndBckgrndClr(loadButton, airportYellow, Color.black);
++    }
++
++    private void setUpEmgAlertButtons(JPanel emergencyAlertButtons) {
++        emergencyAlertButtons.setBackground(Color.black);
++        alertAddButton = new JButton("Add Alert");
++        alertAddButton.addActionListener(this);
+         gbc.fill = GridBagConstraints.HORIZONTAL;
+-        gbc.gridx = 2;
+-        gbc.gridy = 1;
+-        arrFlightButtons.add(arrAddButton, gbc);
+-        arrUpdateButton = new JButton("Update Arriving Flight");
+-        arrUpdateButton.addActionListener(this);
+-        gbc.gridx = 3;
+-        gbc.gridy = 1;
+-        arrFlightButtons.add(arrUpdateButton, gbc);
+-        arrCancelButton = new JButton("Cancel Arriving Flight");
+-        arrCancelButton.addActionListener(this);
+-        gbc.gridx = 2;
+-        gbc.gridy = 2;
+-        arrFlightButtons.add(arrCancelButton, gbc);
+-        arrRemoveButton = new JButton("Remove Arriving Flight");
+-        arrRemoveButton.addActionListener(this);
+-        gbc.gridx = 3;
+-        gbc.gridy = 2;
+-        arrFlightButtons.add(arrRemoveButton, gbc);
+-        gbc.gridx = 1;
+-        gbc.gridy = 1;
+-        add(arrFlightButtons, gbc);
+-
+-        setButtonForegrndAndBckgrndClr(arrCancelButton, airportYellow, Color.black);
+-        setButtonForegrndAndBckgrndClr(arrAddButton, airportYellow, Color.black);
+-        setButtonForegrndAndBckgrndClr(arrRemoveButton, airportYellow, Color.black);
+-        setButtonForegrndAndBckgrndClr(arrUpdateButton, airportYellow, Color.black);
++        setGbcConstants(0, 0);
++        emergencyAlertButtons.add(alertAddButton, gbc);
++        alertRemoveButton = new JButton("Remove Alert");
++        alertRemoveButton.addActionListener(this);
++        setGbcConstants(1, 0);
++        emergencyAlertButtons.add(alertRemoveButton, gbc);
++        setButtonForegrndAndBckgrndClr(alertAddButton, airportYellow, Color.black);
++        setButtonForegrndAndBckgrndClr(alertRemoveButton, airportYellow, Color.black);
++    }
+ 
+-
+-        JPanel depFlightButtons = new JPanel(new GridBagLayout());
++    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
++    private void setUpDepFlightButtons(JPanel depFlightButtons) {
+         depFlightButtons.setBackground(Color.black);
+         depAddButton = new JButton("Add Departing Flight");
+         depAddButton.addActionListener(this);
+@@ -268,37 +235,99 @@
+         setButtonForegrndAndBckgrndClr(depAddButton, airportYellow, Color.black);
+         setButtonForegrndAndBckgrndClr(depRemoveButton, airportYellow, Color.black);
+         setButtonForegrndAndBckgrndClr(depUpdateButton, airportYellow, Color.black);
++    }
+ 
+-        JPanel emergencyAlertButtons = new JPanel(new GridBagLayout());
+-        emergencyAlertButtons.setBackground(Color.black);
+-        alertAddButton = new JButton("Add Alert");
+-        alertAddButton.addActionListener(this);
++    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
++    private void setUpArrFlightButtons(JPanel arrFlightButtons) {
++        arrFlightButtons.setBackground(Color.black);
++        arrAddButton = new JButton("Add Arriving Flight");
++        arrAddButton.addActionListener(this);
+         gbc.fill = GridBagConstraints.HORIZONTAL;
+-        gbc.gridx = 0;
+-        gbc.gridy = 0;
+-        emergencyAlertButtons.add(alertAddButton, gbc);
+-        alertRemoveButton = new JButton("Remove Alert");
+-        alertRemoveButton.addActionListener(this);
+-        gbc.gridx = 1;
+-        gbc.gridy = 0;
+-        emergencyAlertButtons.add(alertRemoveButton, gbc);
+-        JButton saveButton = new JButton("Save to File");
+-        saveButton.addActionListener(this);
+-        gbc.gridx = 0;
+-        gbc.gridy = 6;
+-        emergencyAlertButtons.add(saveButton, gbc);
+-        JButton loadButton = new JButton("Load from File");
+-        loadButton.addActionListener(this);
+-        gbc.gridx = 1;
+-        gbc.gridy = 6;
+-        emergencyAlertButtons.add(loadButton, gbc);
+-        gbc.gridx = 1;
+-        gbc.gridy = 5;
+-        add(emergencyAlertButtons, gbc);
+-        setButtonForegrndAndBckgrndClr(alertAddButton, airportYellow, Color.black);
+-        setButtonForegrndAndBckgrndClr(alertRemoveButton, airportYellow, Color.black);
+-        setButtonForegrndAndBckgrndClr(saveButton, airportYellow, Color.black);
+-        setButtonForegrndAndBckgrndClr(loadButton, airportYellow, Color.black);
++        setGbcConstants(2, 1);
++        arrFlightButtons.add(arrAddButton, gbc);
++        arrUpdateButton = new JButton("Update Arriving Flight");
++        arrUpdateButton.addActionListener(this);
++        setGbcConstants(3, 1);
++        arrFlightButtons.add(arrUpdateButton, gbc);
++        arrCancelButton = new JButton("Cancel Arriving Flight");
++        arrCancelButton.addActionListener(this);
++        setGbcConstants(2, 2);
++        arrFlightButtons.add(arrCancelButton, gbc);
++        arrRemoveButton = new JButton("Remove Arriving Flight");
++        arrRemoveButton.addActionListener(this);
++        setGbcConstants(3, 2);
++        arrFlightButtons.add(arrRemoveButton, gbc);
++        setGbcConstants(1, 1);
++        add(arrFlightButtons, gbc);
++
++        setButtonForegrndAndBckgrndClr(arrCancelButton, airportYellow, Color.black);
++        setButtonForegrndAndBckgrndClr(arrAddButton, airportYellow, Color.black);
++        setButtonForegrndAndBckgrndClr(arrRemoveButton, airportYellow, Color.black);
++        setButtonForegrndAndBckgrndClr(arrUpdateButton, airportYellow, Color.black);
++    }
++
++    public void setGbcConstants(int a, int b) {
++        gbc.gridx = a;
++        gbc.gridy = b;
++    }
++
++    private void setUpEmgAlertTable(String[] alertColumnNames, Object[][] data) {
++        emgAlertTable = new JTable(new DefaultTableModel(data, alertColumnNames) {
++
++            @Override
++            public boolean isCellEditable(int row, int column) {
++                return false;
++            }
++        });
++        emgAlertTable.setBackground(Color.black);
++        emgAlertTable.setForeground(airportYellow);
++        emgAlertTable.setPreferredScrollableViewportSize(new Dimension(770, 150));
++        emgAlertTable.setFillsViewportHeight(true);
++        emgAlertTable.setFocusable(false);
++        emgAlertTable.setRowSelectionAllowed(false);
++        JTableHeader tableHeader2 = emgAlertTable.getTableHeader();
++        tableHeader2.setBackground(airportYellow);
++        tableHeader2.setForeground(Color.black);
++        modelEmgAlertTable = (DefaultTableModel) emgAlertTable.getModel();
++    }
++
++    private void setUpDepFlightsTable(String[] columnNames, Object[][] data) {
++        depFlightTable = new JTable(new DefaultTableModel(data, columnNames) {
++
++            @Override
++            public boolean isCellEditable(int row, int column) {
++                return false;
++            }
++        });
++        depFlightTable.setPreferredScrollableViewportSize(new Dimension(770, 150));
++        depFlightTable.setFillsViewportHeight(true);
++        depFlightTable.setFocusable(false);
++        depFlightTable.setRowSelectionAllowed(false);
++        depFlightTable.setBackground(Color.black);
++        depFlightTable.setForeground(airportYellow);
++        JTableHeader tableHeader1 = depFlightTable.getTableHeader();
++        tableHeader1.setBackground(airportYellow);
++        tableHeader1.setForeground(Color.black);
++        modelDepFlightTable = (DefaultTableModel) depFlightTable.getModel();
++    }
++
++    private void setupArrFlightsTable(String[] columnNames, Object[][] data) {
++        arrFlightTable = new JTable(new DefaultTableModel(data, columnNames) {
++            @Override
++            public boolean isCellEditable(int row, int column) {
++                return false;
++            }
++        });
++        arrFlightTable.setFocusable(false);
++        arrFlightTable.setBackground(Color.black);
++        arrFlightTable.setForeground(airportYellow);
++        arrFlightTable.setRowSelectionAllowed(false);
++        arrFlightTable.setPreferredScrollableViewportSize(new Dimension(770, 150));
++        arrFlightTable.setFillsViewportHeight(true);
++        JTableHeader tableHeader = arrFlightTable.getTableHeader();
++        tableHeader.setBackground(airportYellow);
++        tableHeader.setForeground(Color.black);
++        modelArrFlightTable = (DefaultTableModel) arrFlightTable.getModel();
+     }
+ 
+     /*
+@@ -317,6 +346,7 @@
+      * EFFECTS: creates 2 dimensional array for the tables for the display
+      *  (Arriving, Departing, and Emergency Alerts)
+      */
++
+     public Object[][] flightTableCreator() {
+         List<ArrivingFlight> flightList = fd.getArrivingFlights();
+ 
+@@ -330,7 +360,6 @@
+         return toBeReturned;
+     }
+ 
+-
+     /*
+      * EFFECTS: checks for button clicks and performs action accordingly
+      */
+@@ -352,7 +381,7 @@
+                 arrFlightToAdd = new ArrivingFlight(airline, Integer.parseInt(flightNumber), origin, status,
+                         scheduledArrivalTime, estimatedArrivalTime);
+                 fd.addArrivingFlight(arrFlightToAdd);
+-                modelTable.addRow(new Object[]{arrFlightToAdd.getAirline(), arrFlightToAdd.getFlightNumber(),
++                modelArrFlightTable.addRow(new Object[]{arrFlightToAdd.getAirline(), arrFlightToAdd.getFlightNumber(),
+                         arrFlightToAdd.getStatus(), arrFlightToAdd.getOrigin(),
+                         arrFlightToAdd.getEstimatedArrivalTime(), arrFlightToAdd.getScheduledArrivalTime()});
+             } else {
+@@ -375,7 +404,7 @@
+                 depFlightToAdd = new DepartingFlight(airline, Integer.parseInt(flightNumber), destination, status,
+                         scheduledArrivalTime, estimatedArrivalTime);
+                 fd.addDepartingFlight(depFlightToAdd);
+-                modelTable1.addRow(new Object[]{depFlightToAdd.getAirline(), depFlightToAdd.getFlightNumber(),
++                modelDepFlightTable.addRow(new Object[]{depFlightToAdd.getAirline(), depFlightToAdd.getFlightNumber(),
+                         depFlightToAdd.getStatus(), depFlightToAdd.getDestination(),
+                         depFlightToAdd.getEstimatedDepartureTime(), depFlightToAdd.getScheduledDepartureTime()});
+             } else {
+@@ -392,8 +421,10 @@
+ 
+             if (!rowOfFlightToUpdate.equals("") && !statusToUpdate.equals("")
+                     && !estimatedArrivalTimeToUpdate.equals("")) {
+-                modelTable.setValueAt(statusToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 3);
+-                modelTable.setValueAt(estimatedArrivalTimeToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 5);
++                modelArrFlightTable.setValueAt(
++                        statusToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 3);
++                modelArrFlightTable.setValueAt(
++                        estimatedArrivalTimeToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 5);
+             } else {
+                 JOptionPane.showMessageDialog(this, "Please click on the 'Update Arriving Flight' "
+                         + "button again and enter flight data in all fields");
+@@ -408,8 +439,10 @@
+ 
+             if (!rowOfFlightToUpdate.equals("") && !statusToUpdate.equals("")
+                     && !estimatedDepartureTimeToUpdate.equals("")) {
+-                modelTable1.setValueAt(statusToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 3);
+-                modelTable1.setValueAt(estimatedDepartureTimeToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 5);
++                modelDepFlightTable.setValueAt(
++                        statusToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 3);
++                modelDepFlightTable.setValueAt(
++                        estimatedDepartureTimeToUpdate, Integer.parseInt(rowOfFlightToUpdate) - 1, 5);
+             } else {
+                 JOptionPane.showMessageDialog(this, "Please click on the 'Update Departing Flight' "
+                         + "button again and enter flight data in all fields");
+@@ -418,7 +451,7 @@
+             String flightNumberToCancel = JOptionPane.showInputDialog("Please Input row of flight to cancel");
+ 
+             if (!flightNumberToCancel.equals("")) {
+-                modelTable.setValueAt("CANCELLED", Integer.parseInt(flightNumberToCancel) - 1, 3);
++                modelArrFlightTable.setValueAt("CANCELLED", Integer.parseInt(flightNumberToCancel) - 1, 3);
+             } else {
+                 JOptionPane.showMessageDialog(this, "Please click on the 'Cancel Arriving Flight' "
+                         + "button again and enter flight data in all fields");
+@@ -427,7 +460,7 @@
+             String flightNumberToRemove = JOptionPane.showInputDialog("Please Input row number of flight to remove");
+ 
+             if (!flightNumberToRemove.equals("")) {
+-                int idOfArrFlightToRemove = Integer.parseInt(modelTable.getValueAt(
++                int idOfArrFlightToRemove = Integer.parseInt(modelArrFlightTable.getValueAt(
+                         Integer.parseInt(flightNumberToRemove) - 1, 1).toString());
+                 ArrivingFlight arrFlightToRemove = null;
+                 for (ArrivingFlight arrFlight : fd.getArrivingFlights()) {
+@@ -436,7 +469,7 @@
+                     }
+                 }
+                 fd.removeArrivingFlight(arrFlightToRemove);
+-                modelTable.removeRow(Integer.parseInt(flightNumberToRemove) - 1);
++                modelArrFlightTable.removeRow(Integer.parseInt(flightNumberToRemove) - 1);
+             } else {
+                 JOptionPane.showMessageDialog(this, "Please click on the 'Remove Arriving Flight' "
+                         + "button again and enter flight data in all fields");
+@@ -445,7 +478,7 @@
+             String flightNumberToCancel = JOptionPane.showInputDialog("Please Input row of flight to cancel");
+ 
+             if (!flightNumberToCancel.equals("")) {
+-                modelTable1.setValueAt("CANCELLED", Integer.parseInt(flightNumberToCancel) - 1, 3);
++                modelDepFlightTable.setValueAt("CANCELLED", Integer.parseInt(flightNumberToCancel) - 1, 3);
+             } else {
+                 JOptionPane.showMessageDialog(this, "Please click on the 'Cancel Arriving Flight' "
+                         + "button again and enter flight data in all fields");
+@@ -454,7 +487,7 @@
+             String flightNumberToRemove = JOptionPane.showInputDialog("Please Input row number of flight to remove");
+ 
+             if (!flightNumberToRemove.equals("")) {
+-                int idOfDepFlightToRemove = Integer.parseInt(modelTable1.getValueAt(
++                int idOfDepFlightToRemove = Integer.parseInt(modelDepFlightTable.getValueAt(
+                         Integer.parseInt(flightNumberToRemove) - 1, 1).toString());
+                 DepartingFlight depFlightToRemove = null;
+                 for (DepartingFlight depFlight : fd.getDepartingFlights()) {
+@@ -463,7 +496,7 @@
+                     }
+                 }
+                 fd.removeDepartingFlight(depFlightToRemove);
+-                modelTable1.removeRow(Integer.parseInt(flightNumberToRemove) - 1);
++                modelDepFlightTable.removeRow(Integer.parseInt(flightNumberToRemove) - 1);
+             } else {
+                 JOptionPane.showMessageDialog(this, "Please click on the 'Remove Arriving Flight' "
+                         + "button again and enter flight data in all fields");
+@@ -476,7 +509,7 @@
+ 
+             if (!alertToAdd.equals("")) {
+                 Alert emgAlertToAdd = new Alert(Integer.parseInt(alertIDToAdd), alertToAdd);
+-                modelTable2.addRow(new Object[]{alertIDToAdd, alertToAdd});
++                modelEmgAlertTable.addRow(new Object[]{alertIDToAdd, alertToAdd});
+                 fd.addEmergencyAlert(emgAlertToAdd);
+             } else {
+                 JOptionPane.showMessageDialog(this, "Please click on the 'Add Alert' "
+@@ -487,10 +520,10 @@
+             String rowOfAlertToRemove = JOptionPane.showInputDialog("Please Input row number of alert to remove");
+ 
+             if (!rowOfAlertToRemove.equals("")) {
+-                int idOfAlertToRemove = Integer.parseInt(modelTable2.getValueAt(
++                int idOfAlertToRemove = Integer.parseInt(modelEmgAlertTable.getValueAt(
+                         Integer.parseInt(rowOfAlertToRemove) - 1, 0).toString());
+                 fd.removeEmergencyAlert(idOfAlertToRemove);
+-                modelTable2.removeRow(Integer.parseInt(rowOfAlertToRemove) - 1);
++                modelEmgAlertTable.removeRow(Integer.parseInt(rowOfAlertToRemove) - 1);
+             } else {
+                 JOptionPane.showMessageDialog(this, "Please click on the 'Remove Alert' "
+                         + "button again and enter flight data in all fields");
+@@ -507,28 +540,21 @@
+         } else if (e.getActionCommand().equals("Load from File")) {
+             try {
+                 fd = jsonReader.read();
+-                String[] columnNames = {"Airline",
+-                        "Flight Number",
+-                        "Origin",
+-                        "Status",
+-                        "Scheduled Arrival Time",
+-                        "Estimated Arrival Time"};
+-                Object[][] data = flightTableCreator();
+ 
+                 for (ArrivingFlight arrFlight : fd.getArrivingFlights()) {
+-                    modelTable.addRow(new Object[]{arrFlight.getAirline(), arrFlight.getFlightNumber(),
++                    modelArrFlightTable.addRow(new Object[]{arrFlight.getAirline(), arrFlight.getFlightNumber(),
+                             arrFlight.getStatus(), arrFlight.getOrigin(),
+                             arrFlight.getEstimatedArrivalTime(), arrFlight.getScheduledArrivalTime()});
+                 }
+ 
+                 for (DepartingFlight depFlight : fd.getDepartingFlights()) {
+-                    modelTable1.addRow(new Object[]{depFlight.getAirline(), depFlight.getFlightNumber(),
++                    modelDepFlightTable.addRow(new Object[]{depFlight.getAirline(), depFlight.getFlightNumber(),
+                             depFlight.getStatus(), depFlight.getDestination(),
+                             depFlight.getEstimatedDepartureTime(), depFlight.getScheduledDepartureTime()});
+                 }
+ 
+                 for (Alert emgAlert : fd.getEmergencyAlerts()) {
+-                    modelTable2.addRow(new Object[]{emgAlert.getId(), emgAlert.getAlert()});
++                    modelEmgAlertTable.addRow(new Object[]{emgAlert.getId(), emgAlert.getAlert()});
+                 }
+ 
+                 System.out.println("Loaded Flight Information Display from " + JSON_STORE);
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectModuleManager\">\r\n    <modules>\r\n      <module fileurl=\"file://$PROJECT_DIR$/Project-Starter.iml\" filepath=\"$PROJECT_DIR$/Project-Starter.iml\" />\r\n    </modules>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+--- a/.idea/modules.xml	(revision 1ed666b89505788d474c05908b1f58f3a1f8619d)
++++ b/.idea/modules.xml	(date 1674329106569)
+@@ -2,7 +2,7 @@
+ <project version="4">
+   <component name="ProjectModuleManager">
+     <modules>
+-      <module fileurl="file://$PROJECT_DIR$/Project-Starter.iml" filepath="$PROJECT_DIR$/Project-Starter.iml" />
++      <module fileurl="file://$PROJECT_DIR$/Flight Information Display.iml" filepath="$PROJECT_DIR$/Flight Information Display.iml" />
+     </modules>
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"CompilerConfiguration\">\r\n    <wildcardResourcePatterns>\r\n      <entry name=\"!?*.java\" />\r\n      <entry name=\"!?*.form\" />\r\n      <entry name=\"!?*.class\" />\r\n      <entry name=\"!?*.groovy\" />\r\n      <entry name=\"!?*.scala\" />\r\n      <entry name=\"!?*.flex\" />\r\n      <entry name=\"!?*.kt\" />\r\n      <entry name=\"!?*.clj\" />\r\n    </wildcardResourcePatterns>\r\n  </component>\r\n  <component name=\"JavacSettings\">\r\n    <option name=\"ADDITIONAL_OPTIONS_OVERRIDE\">\r\n      <module name=\"Project-Starter\" options=\"--add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED\" />\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+--- a/.idea/compiler.xml	(revision 1ed666b89505788d474c05908b1f58f3a1f8619d)
++++ b/.idea/compiler.xml	(date 1674329106580)
+@@ -14,7 +14,7 @@
+   </component>
+   <component name="JavacSettings">
+     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+-      <module name="Project-Starter" options="--add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" />
++      <module name="Flight Information Display" options="--add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" />
+     </option>
+   </component>
+ </project>
+\ No newline at end of file
+Index: src/main/persistence/JsonReader.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package persistence;\r\n\r\nimport model.Alert;\r\nimport model.ArrivingFlight;\r\nimport model.DepartingFlight;\r\nimport model.FlightDisplay;\r\nimport org.json.JSONArray;\r\nimport org.json.JSONObject;\r\n\r\nimport java.io.IOException;\r\nimport java.nio.charset.StandardCharsets;\r\nimport java.nio.file.Files;\r\nimport java.nio.file.Paths;\r\nimport java.util.stream.Stream;\r\n\r\n/**\r\n * Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course\r\n * Represents a reader that reads a flight display from JSON data stored in file\r\n */\r\npublic class JsonReader {\r\n    private String source;\r\n\r\n    // EFFECTS: constructs reader to read from source file\r\n    public JsonReader(String source) {\r\n        this.source = source;\r\n    }\r\n\r\n    // EFFECTS: reads workroom from file and returns it;\r\n    // throws IOException if an error occurs reading data from file\r\n    public FlightDisplay read() throws IOException {\r\n        String jsonData = readFile(source);\r\n        JSONObject jsonObject = new JSONObject(jsonData);\r\n        return parseFlightDisplay(jsonObject);\r\n    }\r\n\r\n    // EFFECTS: reads source file as string and returns it\r\n    private String readFile(String source) throws IOException {\r\n        StringBuilder contentBuilder = new StringBuilder();\r\n\r\n        try (Stream<String> stream = Files.lines(Paths.get(source), StandardCharsets.UTF_8)) {\r\n            stream.forEach(contentBuilder::append);\r\n        }\r\n\r\n        return contentBuilder.toString();\r\n    }\r\n\r\n    // EFFECTS: parses workroom from JSON object and returns it\r\n    private FlightDisplay parseFlightDisplay(JSONObject jsonObject) {\r\n        FlightDisplay fd = new FlightDisplay();\r\n        addThingies(fd, jsonObject);\r\n        return fd;\r\n    }\r\n\r\n    // MODIFIES: wr\r\n    // EFFECTS: parses thingies from JSON object and adds them to workroom\r\n    private void addThingies(FlightDisplay fd, JSONObject jsonObject) {\r\n        JSONArray arrFlightsJsonArray = jsonObject.getJSONArray(\"Arriving Flights\");\r\n        for (Object json : arrFlightsJsonArray) {\r\n            JSONObject nextThingy = (JSONObject) json;\r\n            addArrFlight(fd, nextThingy);\r\n        }\r\n        JSONArray depFlightsJsonArray = jsonObject.getJSONArray(\"Departing Flights\");\r\n        for (Object json : depFlightsJsonArray) {\r\n            JSONObject nextThingy = (JSONObject) json;\r\n            addDepFlight(fd, nextThingy);\r\n        }\r\n        JSONArray alertsJsonArray = jsonObject.getJSONArray(\"Emergency Alerts\");\r\n        for (Object json : alertsJsonArray) {\r\n            JSONObject nextThingy = (JSONObject) json;\r\n            addAlert(fd, nextThingy);\r\n        }\r\n    }\r\n\r\n    // MODIFIES: fd\r\n    // EFFECTS: parses arrFlight from JSON object and adds it to workroom\r\n    private void addArrFlight(FlightDisplay fd, JSONObject jsonObject) {\r\n        String airline = jsonObject.getString(\"Airline\");\r\n        int flightNumber = jsonObject.getInt(\"Flight Number\");\r\n        String origin = jsonObject.getString(\"Origin\");\r\n        String status = jsonObject.getString(\"Status\");\r\n        String scheduledArrivalTime = jsonObject.getString(\"Scheduled Arrival Time\");\r\n        String estimatedArrivalTime = jsonObject.getString(\"Estimated Arrival Time\");\r\n        ArrivingFlight flight = new ArrivingFlight(airline,\r\n                flightNumber, origin, status, scheduledArrivalTime, estimatedArrivalTime);\r\n        fd.addArrivingFlight(flight);\r\n    }\r\n\r\n    private void addDepFlight(FlightDisplay fd, JSONObject jsonObject) {\r\n        String airline = jsonObject.getString(\"Airline\");\r\n        int flightNumber = jsonObject.getInt(\"Flight Number\");\r\n        String origin = jsonObject.getString(\"Destination\");\r\n        String status = jsonObject.getString(\"Status\");\r\n        String scheduledDepartureTime = jsonObject.getString(\"Scheduled Departure Time\");\r\n        String estimatedDepartureTime = jsonObject.getString(\"Estimated Departure Time\");\r\n        DepartingFlight flight = new DepartingFlight(airline,\r\n                flightNumber, origin, status, scheduledDepartureTime, estimatedDepartureTime);\r\n        fd.addDepartingFlight(flight);\r\n    }\r\n\r\n    private void addAlert(FlightDisplay fd, JSONObject jsonObject) {\r\n        String alert = jsonObject.getString(\"Alert\");\r\n        int id = jsonObject.getInt(\"ID\");\r\n        Alert emergencyAlert = new Alert(id, alert);\r\n        fd.addEmergencyAlert(emergencyAlert);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/persistence/JsonReader.java b/src/main/persistence/JsonReader.java
+--- a/src/main/persistence/JsonReader.java	(revision 1ed666b89505788d474c05908b1f58f3a1f8619d)
++++ b/src/main/persistence/JsonReader.java	(date 1674329904221)
+@@ -14,7 +14,6 @@
+ import java.util.stream.Stream;
+ 
+ /**
+- * Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
+  * Represents a reader that reads a flight display from JSON data stored in file
+  */
+ public class JsonReader {
+Index: Project-Starter.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Project-Starter.iml b/Flight Information Display.iml
+rename from Project-Starter.iml
+rename to Flight Information Display.iml
+--- a/Project-Starter.iml	(revision 1ed666b89505788d474c05908b1f58f3a1f8619d)
++++ b/Flight Information Display.iml	(date 1674329106548)
+@@ -1,9 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <module type="JAVA_MODULE" version="4">
+-  <component name="CheckStyle-IDEA-Module">
+-    <option name="configuration">
+-      <map />
+-    </option>
++  <component name="CheckStyle-IDEA-Module" serialisationVersion="2">
++    <option name="activeLocationsIds" />
+   </component>
+   <component name="NewModuleRootManager" inherit-compiler-output="true">
+     <exclude-output />
+Index: src/main/persistence/JsonWriter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package persistence;\r\n\r\nimport model.FlightDisplay;\r\nimport org.json.JSONObject;\r\n\r\nimport java.io.File;\r\nimport java.io.FileNotFoundException;\r\nimport java.io.PrintWriter;\r\n\r\n// Represents a writer that writes JSON representation of a flight display to file\r\npublic class JsonWriter {\r\n    private static final int TAB = 4;\r\n    private PrintWriter writer;\r\n    private String destination;\r\n\r\n    /**\r\n     * Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course\r\n     */\r\n    // EFFECTS: constructs writer to write to destination file\r\n    public JsonWriter(String destination) {\r\n        this.destination = destination;\r\n    }\r\n\r\n    // MODIFIES: this\r\n    // EFFECTS: opens writer; throws FileNotFoundException if destination file cannot\r\n    // be opened for writing\r\n    public void open() throws FileNotFoundException {\r\n        writer = new PrintWriter(new File(destination));\r\n    }\r\n\r\n    // MODIFIES: this\r\n    // EFFECTS: writes JSON representation of workroom to file\r\n    public void write(FlightDisplay fd) {\r\n        JSONObject json = fd.toJson();\r\n        saveToFile(json.toString(TAB));\r\n    }\r\n\r\n\r\n    // MODIFIES: this\r\n    // EFFECTS: closes writer\r\n    public void close() {\r\n        writer.close();\r\n    }\r\n\r\n    // MODIFIES: this\r\n    // EFFECTS: writes string to file\r\n    public void saveToFile(String json) {\r\n        writer.print(json);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/persistence/JsonWriter.java b/src/main/persistence/JsonWriter.java
+--- a/src/main/persistence/JsonWriter.java	(revision 1ed666b89505788d474c05908b1f58f3a1f8619d)
++++ b/src/main/persistence/JsonWriter.java	(date 1674330001785)
+@@ -14,9 +14,9 @@
+     private String destination;
+ 
+     /**
+-     * Inspiration for code here taken from Json Demo provided to CPSC 210 students on edX Edge course
++     * EFFECTS: constructs writer to write to destination file
+      */
+-    // EFFECTS: constructs writer to write to destination file
++
+     public JsonWriter(String destination) {
+         this.destination = destination;
+     }
